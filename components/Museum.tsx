@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Suspense } from 'react';
 import Room from './Room';
+import Lighting from './Lighting';
 
 export default function Museum() {
   return (
@@ -13,16 +14,8 @@ export default function Museum() {
           {/* Camera */}
           <PerspectiveCamera makeDefault position={[0, 1.6, 5]} fov={75} />
           
-          {/* Lighting */}
-          <ambientLight intensity={0.3} />
-          <directionalLight
-            position={[5, 10, 5]}
-            intensity={1}
-            castShadow
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
-          />
-          <pointLight position={[-5, 5, -5]} intensity={0.5} />
+          {/* Lighting System */}
+          <Lighting />
           
           {/* Controls */}
           <OrbitControls

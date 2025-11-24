@@ -35,6 +35,9 @@ export default function Museum() {
             wallColor="#e8e8e8"
             floorColor="#2a2a2a"
             ceilingColor="#ffffff"
+            tilePattern="checkerboard"
+            tileColor1="#f5f5f5"
+            tileColor2="#e0e0e0"
           />
           
           {/* First Date Room - Left */}
@@ -46,6 +49,9 @@ export default function Museum() {
             wallColor="#ffe4e1"
             floorColor="#3a2a2a"
             ceilingColor="#fff5f5"
+            tilePattern="marble"
+            tileColor1="#ffe4e1"
+            tileColor2="#ffc0cb"
           />
           
           {/* Adventures Room - Right */}
@@ -57,6 +63,9 @@ export default function Museum() {
             wallColor="#e6f3ff"
             floorColor="#2a3a3a"
             ceilingColor="#f0f8ff"
+            tilePattern="checkerboard"
+            tileColor1="#cce5ff"
+            tileColor2="#99ccff"
           />
           
           {/* Special Moments Room - Back */}
@@ -68,6 +77,9 @@ export default function Museum() {
             wallColor="#fff0f5"
             floorColor="#3a2a3a"
             ceilingColor="#fff5fa"
+            tilePattern="marble"
+            tileColor1="#ffe6f0"
+            tileColor2="#ffccdd"
           />
         </Suspense>
       </Canvas>

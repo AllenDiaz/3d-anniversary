@@ -1,6 +1,7 @@
 'use client';
 
 import { DoubleSide } from 'three';
+import FloorTiles from './FloorTiles';
 
 interface RoomProps {
   width?: number;
@@ -10,6 +11,9 @@ interface RoomProps {
   wallColor?: string;
   floorColor?: string;
   ceilingColor?: string;
+  tilePattern?: 'checkerboard' | 'uniform' | 'marble';
+  tileColor1?: string;
+  tileColor2?: string;
 }
 
 export default function Room({
@@ -20,6 +24,9 @@ export default function Room({
   wallColor = '#f5f5f5',
   floorColor = '#2a2a2a',
   ceilingColor = '#ffffff',
+  tilePattern = 'checkerboard',
+  tileColor1 = '#e0e0e0',
+  tileColor2 = '#c0c0c0',
 }: RoomProps) {
   const [x, y, z] = position;
   const halfWidth = width / 2;
@@ -28,15 +35,17 @@ export default function Room({
 
   return (
     <group position={[x, y, z]}>
-      {/* Floor */}
-      <mesh 
-        rotation={[-Math.PI / 2, 0, 0]} 
-        position={[0, 0, 0]} 
-        receiveShadow
-      >
-        <planeGeometry args={[width, depth]} />
-        <meshStandardMaterial color={floorColor} />
-      </mesh>
+      {/* Floor with Tiles */}
+      <FloorTiles
+        width={width}
+        depth={depth}
+        position={[0, 0.001, 0]}
+        tileSize={0.5}
+        tileColor1={tileColor1}
+        tileColor2={tileColor2}
+        groutColor="#1a1a1a"
+        pattern={tilePattern}
+      />
 
       {/* Ceiling */}
       <mesh 

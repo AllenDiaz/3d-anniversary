@@ -3,6 +3,7 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Suspense } from 'react';
+import Room from './Room';
 
 export default function Museum() {
   return (
@@ -32,17 +33,49 @@ export default function Museum() {
             maxPolarAngle={Math.PI / 2}
           />
           
-          {/* Floor */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, 0, 0]}>
-            <planeGeometry args={[50, 50]} />
-            <meshStandardMaterial color="#1a1a1a" />
-          </mesh>
+          {/* Main Gallery Room */}
+          <Room 
+            width={12}
+            height={4}
+            depth={15}
+            position={[0, 0, 0]}
+            wallColor="#e8e8e8"
+            floorColor="#2a2a2a"
+            ceilingColor="#ffffff"
+          />
           
-          {/* Temporary Box for testing */}
-          <mesh position={[0, 1, 0]} castShadow>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="#ff69b4" />
-          </mesh>
+          {/* First Date Room - Left */}
+          <Room 
+            width={8}
+            height={3.5}
+            depth={8}
+            position={[-10, 0, 0]}
+            wallColor="#ffe4e1"
+            floorColor="#3a2a2a"
+            ceilingColor="#fff5f5"
+          />
+          
+          {/* Adventures Room - Right */}
+          <Room 
+            width={8}
+            height={3.5}
+            depth={8}
+            position={[10, 0, 0]}
+            wallColor="#e6f3ff"
+            floorColor="#2a3a3a"
+            ceilingColor="#f0f8ff"
+          />
+          
+          {/* Special Moments Room - Back */}
+          <Room 
+            width={10}
+            height={3.8}
+            depth={8}
+            position={[0, 0, -11.5]}
+            wallColor="#fff0f5"
+            floorColor="#3a2a3a"
+            ceilingColor="#fff5fa"
+          />
         </Suspense>
       </Canvas>
       

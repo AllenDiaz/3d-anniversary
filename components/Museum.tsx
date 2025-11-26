@@ -6,6 +6,7 @@ import { Suspense, useState } from 'react';
 import Room from './Room';
 import Lighting from './Lighting';
 import CameraControls from './CameraControls';
+import PhotoFrame from './PhotoFrame';
 
 export default function Museum() {
   const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
@@ -22,6 +23,79 @@ export default function Museum() {
           
           {/* Camera Controls */}
           <CameraControls mode={controlMode} />
+          
+          {/* Photo Frames - Main Gallery */}
+          <PhotoFrame 
+            position={[-5.99, 2, 2]} 
+            rotation={[0, Math.PI / 2, 0]}
+            frameStyle="classic"
+            frameColor="#5c4033"
+            caption="Our First Meeting"
+            date="January 2024"
+          />
+          <PhotoFrame 
+            position={[-5.99, 2, -2]} 
+            rotation={[0, Math.PI / 2, 0]}
+            frameStyle="ornate"
+            frameColor="#8b4513"
+            caption="Coffee Date"
+            date="February 2024"
+            frameWidth={1.0}
+            frameHeight={1.3}
+          />
+          
+          <PhotoFrame 
+            position={[5.99, 2, 2]} 
+            rotation={[0, -Math.PI / 2, 0]}
+            frameStyle="modern"
+            frameColor="#2c2c2c"
+            caption="Beach Adventure"
+            date="March 2024"
+          />
+          <PhotoFrame 
+            position={[5.99, 2, -2]} 
+            rotation={[0, -Math.PI / 2, 0]}
+            frameStyle="classic"
+            frameColor="#654321"
+            caption="Sunset Together"
+            date="April 2024"
+            frameWidth={1.4}
+            frameHeight={1.1}
+          />
+          
+          {/* Photo Frames - First Date Room */}
+          <PhotoFrame 
+            position={[-13.99, 2, 0]} 
+            rotation={[0, Math.PI / 2, 0]}
+            frameStyle="ornate"
+            frameColor="#cd7f32"
+            caption="The Moment I Knew"
+            date="Valentine's Day"
+            frameWidth={1.5}
+            frameHeight={1.8}
+          />
+          
+          {/* Photo Frames - Adventures Room */}
+          <PhotoFrame 
+            position={[13.99, 2, 0]} 
+            rotation={[0, -Math.PI / 2, 0]}
+            frameStyle="modern"
+            frameColor="#4a4a4a"
+            caption="Mountain Hike"
+            date="Summer 2024"
+          />
+          
+          {/* Photo Frames - Special Moments Room */}
+          <PhotoFrame 
+            position={[0, 2, -15.49]} 
+            rotation={[0, 0, 0]}
+            frameStyle="ornate"
+            frameColor="#d4af37"
+            caption="Forever & Always"
+            date="Our Anniversary"
+            frameWidth={1.6}
+            frameHeight={2.0}
+          />
           
           {/* Main Gallery Room */}
           <Room 

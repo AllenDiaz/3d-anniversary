@@ -35,6 +35,11 @@ export default function Museum() {
             tilePattern="checkerboard"
             tileColor1="#f5f5f5"
             tileColor2="#e0e0e0"
+            doors={[
+              { position: [-6, 0, 0], rotation: [0, Math.PI / 2, 0], label: '💕 First Date' },
+              { position: [6, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '🌍 Adventures' },
+              { position: [0, 0, -7.5], rotation: [0, 0, 0], label: '✨ Special Moments' },
+            ]}
           />
           
           {/* First Date Room - Left */}
@@ -49,6 +54,9 @@ export default function Museum() {
             tilePattern="marble"
             tileColor1="#ffe4e1"
             tileColor2="#ffc0cb"
+            doors={[
+              { position: [4, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '← Main Gallery' },
+            ]}
           />
           
           {/* Adventures Room - Right */}
@@ -63,6 +71,9 @@ export default function Museum() {
             tilePattern="checkerboard"
             tileColor1="#cce5ff"
             tileColor2="#99ccff"
+            doors={[
+              { position: [-4, 0, 0], rotation: [0, Math.PI / 2, 0], label: '← Main Gallery' },
+            ]}
           />
           
           {/* Special Moments Room - Back */}
@@ -77,6 +88,9 @@ export default function Museum() {
             tilePattern="marble"
             tileColor1="#ffe6f0"
             tileColor2="#ffccdd"
+            doors={[
+              { position: [0, 0, 4], rotation: [0, Math.PI, 0], label: '← Main Gallery' },
+            ]}
           />
         </Suspense>
       </Canvas>

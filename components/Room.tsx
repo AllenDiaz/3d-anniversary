@@ -2,6 +2,13 @@
 
 import { DoubleSide } from 'three';
 import FloorTiles from './FloorTiles';
+import Door from './Door';
+
+interface DoorConfig {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  label?: string;
+}
 
 interface RoomProps {
   width?: number;
@@ -14,6 +21,7 @@ interface RoomProps {
   tilePattern?: 'checkerboard' | 'uniform' | 'marble';
   tileColor1?: string;
   tileColor2?: string;
+  doors?: DoorConfig[];
 }
 
 export default function Room({
@@ -27,6 +35,7 @@ export default function Room({
   tilePattern = 'checkerboard',
   tileColor1 = '#e0e0e0',
   tileColor2 = '#c0c0c0',
+  doors = [],
 }: RoomProps) {
   const [x, y, z] = position;
   const halfWidth = width / 2;
@@ -35,6 +44,15 @@ export default function Room({
 
   return (
     <group position={[x, y, z]}>
+      {/* Doors/Portals */}
+      {doors.map((door, index) => (
+        <Door
+          key={index}
+          position={door.position}
+          rotation={door.rotation}
+          label={door.label}
+        />
+      ))}
       {/* Floor with Tiles */}
       <FloorTiles
         width={width}

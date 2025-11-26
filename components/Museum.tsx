@@ -628,8 +628,19 @@ export default function Museum() {
                       <h3 className="text-xl font-semibold text-amber-300 mb-3 flex items-center gap-2">
                         📖 {story.title}
                       </h3>
-                      <div className="text-gray-300 leading-relaxed whitespace-pre-line">
-                        {story.content}
+                      {/* Scrollable Story Container */}
+                      <div className="relative">
+                        <div 
+                          className="max-h-[400px] overflow-y-auto pr-4 text-gray-300 leading-relaxed whitespace-pre-line scroll-smooth"
+                          style={{
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: '#d97706 #27272a'
+                          }}
+                        >
+                          {story.content}
+                        </div>
+                        {/* Scroll indicator gradient */}
+                        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-zinc-900 to-transparent pointer-events-none" />
                       </div>
                       {story.mood && (
                         <div className="mt-4 text-sm text-gray-500 italic">

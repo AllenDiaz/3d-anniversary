@@ -44,3 +44,28 @@ body {
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #f59e0b, #d97706);
 }
+
+/* Custom Scrollbar for Timeline */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #18181b;
+  border-radius: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d97706, #ec4899);
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #f59e0b, #f472b6);
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d97706 #18181b;
+}

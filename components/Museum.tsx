@@ -20,6 +20,7 @@ import {
   RoomSign 
 } from './RoomDecor';
 import ExhibitDescription from './ExhibitDescription';
+import Timeline from './Timeline';
 
 type RoomName = 'main' | 'firstDate' | 'adventures' | 'specialMoments';
 
@@ -31,12 +32,13 @@ const ROOM_POSITIONS: Record<RoomName, { camera: [number, number, number]; lookA
 };
 
 export default function Museum() {
-  const { getMemoriesByRoom, getStoryByMemoryId } = useMemories();
+  const { getMemoriesByRoom, getStoryByMemoryId, timeline } = useMemories();
   const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [notification, setNotification] = useState<string>('');
   const [currentRoom, setCurrentRoom] = useState<RoomName>('main');
+  const [isTimelineOpen, setIsTimelineOpen] = useState<boolean>(false);
   const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 1.6, 5]);
   const [lookAtTarget, setLookAtTarget] = useState<[number, number, number]>([0, 1, 0]);
 
@@ -60,16 +62,20 @@ export default function Museum() {
     showNotification(`Entering ${roomNames[room]}...`);
   };
 
-  // ESC key to close modal
+  // ESC key to close modal or timeline
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedMemory) {
-        setSelectedMemory(null);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (selectedMemory) {
+          setSelectedMemory(null);
+        } else if (isTimelineOpen) {
+          setIsTimelineOpen(false);
+        }
       }
     };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [selectedMemory]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedMemory, isTimelineOpen]);
 
   const playClickSound = () => {
     if (!soundEnabled) return;
@@ -492,6 +498,15 @@ export default function Museum() {
         </button>
       </div>
 
+      {/* Timeline Button */}
+      <button
+        onClick={() => setIsTimelineOpen(true)}
+        className="absolute top-4 right-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all hover:scale-105 flex items-center gap-2 font-semibold"
+      >
+        <span className="text-xl">📅</span>
+        <span>Timeline</span>
+      </button>
+
       {/* Room Navigation Minimap */}
       <div className="absolute top-20 left-4 bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
         <div className="text-white text-sm font-semibold mb-2">📍 Current Room</div>
@@ -660,6 +675,19 @@ export default function Museum() {
           </div>
         );
       })()}
+
+      {/* Timeline View */}
+      <Timeline
+        isOpen={isTimelineOpen}
+        onClose={() => setIsTimelineOpen(false)}
+        timeline={timeline}
+        onMemoryClick={(memory: Memory) => {
+          setSelectedMemory(memory);
+          setIsTimelineOpen(false);
+          playClickSound();
+          showNotification(`Opening ${memory.title}...`);
+        }}
+      />
     </div>
   );
 }

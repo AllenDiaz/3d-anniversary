@@ -7,12 +7,8 @@ import Room from './Room';
 import Lighting from './Lighting';
 import CameraControls from './CameraControls';
 import PhotoFrame from './PhotoFrame';
-
-interface PhotoData {
-  caption: string;
-  date: string;
-  imageUrl?: string;
-}
+import { useMemories } from '@/hooks/useMemories';
+import { Memory } from '@/types/memory';
 
 type RoomName = 'main' | 'firstDate' | 'adventures' | 'specialMoments';
 
@@ -24,8 +20,9 @@ const ROOM_POSITIONS: Record<RoomName, { camera: [number, number, number]; lookA
 };
 
 export default function Museum() {
+  const { getMemoriesByRoom, getStoryByMemoryId } = useMemories();
   const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
-  const [selectedPhoto, setSelectedPhoto] = useState<PhotoData | null>(null);
+  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [notification, setNotification] = useState<string>('');
   const [currentRoom, setCurrentRoom] = useState<RoomName>('main');
@@ -55,13 +52,13 @@ export default function Museum() {
   // ESC key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedPhoto) {
-        setSelectedPhoto(null);
+      if (e.key === 'Escape' && selectedMemory) {
+        setSelectedMemory(null);
       }
     };
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [selectedPhoto]);
+  }, [selectedMemory]);
 
   const playClickSound = () => {
     if (!soundEnabled) return;
@@ -95,113 +92,78 @@ export default function Museum() {
             targetLookAt={lookAtTarget}
           />
           
-          {/* Photo Frames - Main Gallery */}
-          <PhotoFrame 
-            position={[-5.99, 2, 2]} 
-            rotation={[0, Math.PI / 2, 0]}
-            frameStyle="classic"
-            frameColor="#5c4033"
-            caption="Our First Meeting"
-            date="January 2024"
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
-          <PhotoFrame 
-            position={[-5.99, 2, -2]} 
-            rotation={[0, Math.PI / 2, 0]}
-            frameStyle="ornate"
-            frameColor="#8b4513"
-            caption="Coffee Date"
-            date="February 2024"
-            frameWidth={1.0}
-            frameHeight={1.3}
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
+          {/* Photo Frames - Data Driven */}
+          {getMemoriesByRoom('main').map((memory) => (
+            <PhotoFrame
+              key={memory.id}
+              position={memory.position}
+              rotation={memory.rotation}
+              frameStyle={memory.frameStyle}
+              caption={memory.title}
+              date={memory.date}
+              frameWidth={memory.size.width}
+              frameHeight={memory.size.height}
+              onClick={() => {
+                setSelectedMemory(memory);
+                playClickSound();
+                showNotification(`Opening ${memory.title}...`);
+              }}
+            />
+          ))}
           
-          <PhotoFrame 
-            position={[5.99, 2, 2]} 
-            rotation={[0, -Math.PI / 2, 0]}
-            frameStyle="modern"
-            frameColor="#2c2c2c"
-            caption="Beach Adventure"
-            date="March 2024"
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
-          <PhotoFrame 
-            position={[5.99, 2, -2]} 
-            rotation={[0, -Math.PI / 2, 0]}
-            frameStyle="classic"
-            frameColor="#654321"
-            caption="Sunset Together"
-            date="April 2024"
-            frameWidth={1.4}
-            frameHeight={1.1}
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
+          {getMemoriesByRoom('firstDate').map((memory) => (
+            <PhotoFrame
+              key={memory.id}
+              position={memory.position}
+              rotation={memory.rotation}
+              frameStyle={memory.frameStyle}
+              caption={memory.title}
+              date={memory.date}
+              frameWidth={memory.size.width}
+              frameHeight={memory.size.height}
+              onClick={() => {
+                setSelectedMemory(memory);
+                playClickSound();
+                showNotification(`Opening ${memory.title}...`);
+              }}
+            />
+          ))}
           
-          {/* Photo Frames - First Date Room */}
-          <PhotoFrame 
-            position={[-13.99, 2, 0]} 
-            rotation={[0, Math.PI / 2, 0]}
-            frameStyle="ornate"
-            frameColor="#cd7f32"
-            caption="The Moment I Knew"
-            date="Valentine's Day"
-            frameWidth={1.5}
-            frameHeight={1.8}
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
+          {getMemoriesByRoom('adventures').map((memory) => (
+            <PhotoFrame
+              key={memory.id}
+              position={memory.position}
+              rotation={memory.rotation}
+              frameStyle={memory.frameStyle}
+              caption={memory.title}
+              date={memory.date}
+              frameWidth={memory.size.width}
+              frameHeight={memory.size.height}
+              onClick={() => {
+                setSelectedMemory(memory);
+                playClickSound();
+                showNotification(`Opening ${memory.title}...`);
+              }}
+            />
+          ))}
           
-          {/* Photo Frames - Adventures Room */}
-          <PhotoFrame 
-            position={[13.99, 2, 0]} 
-            rotation={[0, -Math.PI / 2, 0]}
-            frameStyle="modern"
-            frameColor="#4a4a4a"
-            caption="Mountain Hike"
-            date="Summer 2024"
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
-          
-          {/* Photo Frames - Special Moments Room */}
-          <PhotoFrame 
-            position={[0, 2, -15.49]} 
-            rotation={[0, 0, 0]}
-            frameStyle="ornate"
-            frameColor="#d4af37"
-            caption="Forever & Always"
-            date="Our Anniversary"
-            frameWidth={1.6}
-            frameHeight={2.0}
-            onClick={(data) => {
-              setSelectedPhoto(data);
-              playClickSound();
-              showNotification('Opening photo...');
-            }}
-          />
+          {getMemoriesByRoom('specialMoments').map((memory) => (
+            <PhotoFrame
+              key={memory.id}
+              position={memory.position}
+              rotation={memory.rotation}
+              frameStyle={memory.frameStyle}
+              caption={memory.title}
+              date={memory.date}
+              frameWidth={memory.size.width}
+              frameHeight={memory.size.height}
+              onClick={() => {
+                setSelectedMemory(memory);
+                playClickSound();
+                showNotification(`Opening ${memory.title}...`);
+              }}
+            />
+          ))}
           
           {/* Main Gallery Room */}
           <Room 
@@ -400,53 +362,87 @@ export default function Museum() {
         )}
       </div>
 
-      {/* Photo Modal */}
-      {selectedPhoto && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
-          onClick={() => setSelectedPhoto(null)}
-        >
+      {/* Memory Modal with Story */}
+      {selectedMemory && (() => {
+        const story = getStoryByMemoryId(selectedMemory.id);
+        return (
           <div 
-            className="relative max-w-5xl max-h-[90vh] animate-in zoom-in duration-300"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-300 p-4"
+            onClick={() => setSelectedMemory(null)}
           >
-            {/* Close button */}
-            <button
-              onClick={() => setSelectedPhoto(null)}
-              className="absolute -top-12 right-0 text-white hover:text-pink-400 transition-colors text-4xl font-light"
-              aria-label="Close"
+            <div 
+              className="relative max-w-4xl max-h-[90vh] overflow-y-auto animate-in zoom-in duration-300"
+              onClick={(e) => e.stopPropagation()}
             >
-              ×
-            </button>
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedMemory(null)}
+                className="absolute -top-12 right-0 text-white hover:text-pink-400 transition-colors text-4xl font-light z-10"
+                aria-label="Close"
+              >
+                ×
+              </button>
 
-            {/* Photo container with frame effect */}
-            <div className="bg-gradient-to-br from-amber-900 to-amber-950 p-8 rounded-lg shadow-2xl">
-              {/* Inner mat */}
-              <div className="bg-cream p-6">
+              {/* Memory container */}
+              <div className="bg-gradient-to-br from-amber-900 to-amber-950 p-6 rounded-lg shadow-2xl">
                 {/* Photo */}
-                <div className="relative bg-gradient-to-br from-pink-200 via-pink-100 to-pink-50 aspect-[4/5] w-[600px] flex items-center justify-center shadow-inner">
-                  <div className="text-9xl">💕</div>
+                <div className="bg-cream p-4 mb-4">
+                  <div className="relative bg-gradient-to-br from-pink-200 via-pink-100 to-pink-50 aspect-[4/3] w-full flex items-center justify-center shadow-inner">
+                    <div className="text-8xl">💕</div>
+                  </div>
+                </div>
+                
+                {/* Memory Details */}
+                <div className="bg-zinc-900 p-6 rounded">
+                  <h2 className="text-3xl font-bold text-amber-400 mb-2">
+                    {selectedMemory.title}
+                  </h2>
+                  <div className="flex items-center gap-4 text-gray-400 text-sm mb-4">
+                    <span>📅 {selectedMemory.date}</span>
+                    {selectedMemory.location && <span>📍 {selectedMemory.location}</span>}
+                    {selectedMemory.emotion && <span>💭 {selectedMemory.emotion}</span>}
+                  </div>
+                  <p className="text-gray-300 mb-4 text-lg">
+                    {selectedMemory.description}
+                  </p>
+                  
+                  {selectedMemory.tags && selectedMemory.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {selectedMemory.tags.map(tag => (
+                        <span key={tag} className="px-3 py-1 bg-pink-900/30 text-pink-300 rounded-full text-xs">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Story Content */}
+                  {story && (
+                    <div className="mt-6 pt-6 border-t border-gray-700">
+                      <h3 className="text-xl font-semibold text-amber-300 mb-3 flex items-center gap-2">
+                        📖 {story.title}
+                      </h3>
+                      <div className="text-gray-300 leading-relaxed whitespace-pre-line">
+                        {story.content}
+                      </div>
+                      {story.mood && (
+                        <div className="mt-4 text-sm text-gray-500 italic">
+                          Mood: {story.mood}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              
-              {/* Caption plaque */}
-              <div className="mt-6 bg-zinc-900 py-3 px-6 rounded text-center">
-                <h3 className="text-2xl font-semibold text-amber-400 mb-1">
-                  {selectedPhoto.caption}
-                </h3>
-                <p className="text-gray-400 text-sm">
-                  {selectedPhoto.date}
-                </p>
-              </div>
-            </div>
 
-            {/* Helper text */}
-            <p className="text-center text-white/60 mt-4 text-sm">
-              Click outside or press ESC to close
-            </p>
+              {/* Helper text */}
+              <p className="text-center text-white/60 mt-4 text-sm">
+                Click outside or press ESC to close
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

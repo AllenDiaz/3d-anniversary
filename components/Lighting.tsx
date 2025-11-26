@@ -1,118 +1,80 @@
 'use client';
 
-import { SpotLight } from '@react-three/drei';
-
 export default function Lighting() {
   return (
     <>
-      {/* Ambient base lighting */}
-      <ambientLight intensity={0.4} />
+      {/* Ambient base lighting - provides overall illumination */}
+      <ambientLight intensity={0.6} />
       
-      {/* Hemisphere light for natural lighting */}
+      {/* Hemisphere light for natural sky/ground lighting */}
       <hemisphereLight
         color="#ffffff"
-        groundColor="#444444"
-        intensity={0.3}
+        groundColor="#666666"
+        intensity={0.5}
         position={[0, 50, 0]}
       />
 
-      {/* Main Gallery Spotlights */}
-      <SpotLight
-        position={[0, 3.5, 0]}
-        angle={0.6}
-        penumbra={0.5}
-        intensity={2}
+      {/* Main Gallery - Central overhead light */}
+      <pointLight 
+        position={[0, 3.5, 0]} 
+        intensity={1.5} 
+        color="#ffffff" 
+        distance={15}
         castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        color="#ffffff"
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
       />
       
-      {/* Gallery wall spotlights - Left wall */}
-      <SpotLight
-        position={[-5, 3, 0]}
-        angle={0.4}
-        penumbra={0.6}
-        intensity={1.5}
-        castShadow
-        color="#fff8dc"
-        target-position={[-6, 1.5, 0]}
-      />
-      
-      {/* Gallery wall spotlights - Right wall */}
-      <SpotLight
-        position={[5, 3, 0]}
-        angle={0.4}
-        penumbra={0.6}
-        intensity={1.5}
-        castShadow
-        color="#fff8dc"
-        target-position={[6, 1.5, 0]}
-      />
-      
-      {/* Gallery wall spotlights - Back wall */}
-      <SpotLight
-        position={[0, 3, -6]}
-        angle={0.4}
-        penumbra={0.6}
-        intensity={1.5}
-        castShadow
-        color="#fff8dc"
-        target-position={[0, 1.5, -7.5]}
-      />
+      {/* Gallery wall lights - simplified */}
+      <pointLight position={[-5, 3, 2]} intensity={1.2} color="#fff8dc" distance={6} />
+      <pointLight position={[-5, 3, -2]} intensity={1.2} color="#fff8dc" distance={6} />
+      <pointLight position={[5, 3, 2]} intensity={1.2} color="#fff8dc" distance={6} />
+      <pointLight position={[5, 3, -2]} intensity={1.2} color="#fff8dc" distance={6} />
+      <pointLight position={[0, 3, -6]} intensity={1.2} color="#fff8dc" distance={6} />
 
-      {/* First Date Room - Pink ambiance */}
-      <SpotLight
-        position={[-10, 3, 0]}
-        angle={0.5}
-        penumbra={0.5}
-        intensity={2}
-        castShadow
-        color="#ffb3ba"
-      />
+      {/* First Date Room - Pink romantic ambiance */}
       <pointLight
-        position={[-10, 3, 0]}
-        intensity={0.8}
+        position={[-10, 3.2, 0]}
+        intensity={2}
         color="#ff69b4"
-        distance={8}
-      />
-
-      {/* Adventures Room - Blue ambiance */}
-      <SpotLight
-        position={[10, 3, 0]}
-        angle={0.5}
-        penumbra={0.5}
-        intensity={2}
+        distance={10}
         castShadow
-        color="#b3d9ff"
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
       />
+      <pointLight position={[-10, 2.5, 2]} intensity={0.8} color="#ffb3d9" distance={6} />
+      <pointLight position={[-10, 2.5, -2]} intensity={0.8} color="#ffb3d9" distance={6} />
+
+      {/* Adventures Room - Blue explorer ambiance */}
       <pointLight
-        position={[10, 3, 0]}
-        intensity={0.8}
+        position={[10, 3.2, 0]}
+        intensity={2}
         color="#4da6ff"
-        distance={8}
-      />
-
-      {/* Special Moments Room - Romantic ambiance */}
-      <SpotLight
-        position={[0, 3.3, -11.5]}
-        angle={0.5}
-        penumbra={0.5}
-        intensity={2}
+        distance={10}
         castShadow
-        color="#ffccff"
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
       />
+      <pointLight position={[10, 2.5, 2]} intensity={0.8} color="#b3d9ff" distance={6} />
+      <pointLight position={[10, 2.5, -2]} intensity={0.8} color="#b3d9ff" distance={6} />
+
+      {/* Special Moments Room - Purple/pink magical ambiance */}
       <pointLight
-        position={[0, 3, -11.5]}
-        intensity={0.9}
+        position={[0, 3.5, -11.5]}
+        intensity={2}
         color="#ff99cc"
-        distance={8}
+        distance={10}
+        castShadow
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
       />
+      <pointLight position={[-2, 2.8, -11.5]} intensity={0.9} color="#ffccff" distance={6} />
+      <pointLight position={[2, 2.8, -11.5]} intensity={0.9} color="#ffccff" distance={6} />
       
-      {/* Accent lights for doorways/transitions */}
-      <pointLight position={[-6, 2, 0]} intensity={0.3} color="#ffffff" distance={4} />
-      <pointLight position={[6, 2, 0]} intensity={0.3} color="#ffffff" distance={4} />
-      <pointLight position={[0, 2, -7.5]} intensity={0.3} color="#ffffff" distance={4} />
+      {/* Doorway accent lights */}
+      <pointLight position={[-6, 2, 0]} intensity={0.5} color="#ffffff" distance={4} />
+      <pointLight position={[6, 2, 0]} intensity={0.5} color="#ffffff" distance={4} />
+      <pointLight position={[0, 2, -7.5]} intensity={0.5} color="#ffffff" distance={4} />
     </>
   );
 }

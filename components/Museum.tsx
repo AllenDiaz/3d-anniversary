@@ -9,6 +9,16 @@ import CameraControls from './CameraControls';
 import PhotoFrame from './PhotoFrame';
 import { useMemories } from '@/hooks/useMemories';
 import { Memory } from '@/types/memory';
+import { 
+  DecorativePlant, 
+  Pedestal, 
+  HeartDecor, 
+  Bench, 
+  WallText, 
+  FloatingHeart, 
+  Table, 
+  RoomSign 
+} from './RoomDecor';
 
 type RoomName = 'main' | 'firstDate' | 'adventures' | 'specialMoments';
 
@@ -184,6 +194,27 @@ export default function Museum() {
             ]}
           />
           
+          {/* Main Gallery Decorations */}
+          <RoomSign 
+            position={[0, 3.2, -7.4]} 
+            rotation={[0, 0, 0]}
+            title="Our Love Story"
+            subtitle="A Journey Through Time"
+            emoji="🏛️"
+          />
+          <Pedestal position={[-4, 0, 4]} height={1.2} />
+          <Pedestal position={[4, 0, 4]} height={1.2} />
+          <DecorativePlant position={[-5.5, 0, 6]} scale={1.2} />
+          <DecorativePlant position={[5.5, 0, 6]} scale={1.2} />
+          <Bench position={[0, 0, 6]} rotation={[0, Math.PI, 0]} color="#654321" />
+          <WallText 
+            position={[0, 3.5, 7.4]}
+            rotation={[0, Math.PI, 0]}
+            text="Welcome to Our Virtual Love Museum"
+            fontSize={0.25}
+            color="#d4af37"
+          />
+          
           {/* First Date Room - Left */}
           <Room 
             width={8}
@@ -199,6 +230,31 @@ export default function Museum() {
             doors={[
               { position: [4, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '← Main Gallery', onClick: () => navigateToRoom('main') },
             ]}
+          />
+          
+          {/* First Date Room Decorations */}
+          <RoomSign 
+            position={[-10, 3, -3.9]}
+            rotation={[0, 0, 0]}
+            title="First Date"
+            subtitle="Where It All Began"
+            emoji="💕"
+          />
+          <Table position={[-12, 0, 2]} rotation={[0, Math.PI / 4, 0]} color="#8b4513" />
+          <HeartDecor position={[-12, 0.6, 2]} scale={0.2} color="#ff69b4" />
+          <Table position={[-12, 0, -2]} rotation={[0, -Math.PI / 4, 0]} color="#8b4513" />
+          <HeartDecor position={[-12, 0.6, -2]} scale={0.2} color="#ff1493" />
+          <FloatingHeart position={[-8.5, 2.5, 2]} color="#ff69b4" />
+          <FloatingHeart position={[-8.5, 2.8, -2]} color="#ff1493" />
+          <FloatingHeart position={[-10, 3, 0]} color="#ffb3d9" />
+          <DecorativePlant position={[-8.5, 0, 3.5]} scale={0.8} color="#ff69b4" />
+          <DecorativePlant position={[-8.5, 0, -3.5]} scale={0.8} color="#ff69b4" />
+          <WallText
+            position={[-10, 2.8, 3.9]}
+            rotation={[0, Math.PI, 0]}
+            text="'The best thing to hold onto in life is each other'"
+            fontSize={0.15}
+            color="#ff69b4"
           />
           
           {/* Adventures Room - Right */}
@@ -218,6 +274,34 @@ export default function Museum() {
             ]}
           />
           
+          {/* Adventures Room Decorations */}
+          <RoomSign 
+            position={[10, 3, -3.9]}
+            rotation={[0, 0, 0]}
+            title="Adventures"
+            subtitle="Exploring the World Together"
+            emoji="🌍"
+          />
+          <Bench position={[8.5, 0, 0]} rotation={[0, Math.PI / 2, 0]} color="#4a4a4a" />
+          <Pedestal position={[12, 0, 2.5]} height={0.8} color="#4da6ff" topColor="#2c2c2c" />
+          <Pedestal position={[12, 0, -2.5]} height={0.8} color="#4da6ff" topColor="#2c2c2c" />
+          <WallText
+            position={[10, 1.2, -3.85]}
+            rotation={[0, 0, 0]}
+            text="🏔️"
+            fontSize={0.5}
+            color="#4da6ff"
+          />
+          <WallText
+            position={[10, 2.8, 3.9]}
+            rotation={[0, Math.PI, 0]}
+            text="'Adventure is worthwhile in itself'"
+            fontSize={0.15}
+            color="#4da6ff"
+          />
+          <DecorativePlant position={[8.5, 0, 3.5]} scale={1} color="#2d5016" />
+          <DecorativePlant position={[8.5, 0, -3.5]} scale={1} color="#2d5016" />
+          
           {/* Special Moments Room - Back */}
           <Room 
             width={10}
@@ -233,6 +317,32 @@ export default function Museum() {
             doors={[
               { position: [0, 0, 4], rotation: [0, Math.PI, 0], label: '← Main Gallery', onClick: () => navigateToRoom('main') },
             ]}
+          />
+          
+          {/* Special Moments Room Decorations */}
+          <RoomSign 
+            position={[0, 3.4, -15.4]}
+            rotation={[0, 0, 0]}
+            title="Special Moments"
+            subtitle="Forever & Always"
+            emoji="✨"
+          />
+          <Pedestal position={[-3, 0, -14]} height={1.5} color="#d4af37" />
+          <HeartDecor position={[-3, 1.8, -14]} scale={0.3} color="#ff99cc" emissive="#ff1493" />
+          <Pedestal position={[3, 0, -14]} height={1.5} color="#d4af37" />
+          <HeartDecor position={[3, 1.8, -14]} scale={0.3} color="#ffb3d9" emissive="#ff69b4" />
+          <FloatingHeart position={[-2, 3, -11.5]} color="#ff99cc" />
+          <FloatingHeart position={[2, 3, -11.5]} color="#ffb3d9" />
+          <FloatingHeart position={[0, 3.2, -13]} color="#ffccff" />
+          <Bench position={[0, 0, -9]} rotation={[0, Math.PI, 0]} color="#8b4513" />
+          <DecorativePlant position={[-4.5, 0, -11.5]} scale={1} color="#ff69b4" />
+          <DecorativePlant position={[4.5, 0, -11.5]} scale={1} color="#ff69b4" />
+          <WallText
+            position={[0, 3, -7.6]}
+            rotation={[0, Math.PI, 0]}
+            text="'In all the world, there is no heart for me like yours'"
+            fontSize={0.15}
+            color="#ff99cc"
           />
         </Suspense>
       </Canvas>

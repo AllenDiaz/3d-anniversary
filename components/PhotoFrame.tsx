@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Text, SpotLight } from '@react-three/drei';
 import * as THREE from 'three';
-import { useRef } from 'react';
+import gsap from 'gsap';
 
 interface PhotoFrameProps {
   position: [number, number, number];
@@ -31,7 +31,12 @@ export default function PhotoFrame({
 }: PhotoFrameProps) {
   const [isHovered, setIsHovered] = useState(false);
   const groupRef = useRef<THREE.Group>(null);
-  const targetScale = isHovered ? 1.05 : 1;
+  const spotLightRef = useRef<THREE.SpotLight>(null);
+  const captionRef = useRef<THREE.Group>(null);
+  const frameRefs = useRef<THREE.Mesh[]>([]);
+  
+  const targetScale = isHovered ? 1.08 : 1;
+  const targetDepth = isHovered ? 0.15 : 0;
   
   // Frame border thickness based on style
   const borderThickness = frameStyle === 'ornate' ? 0.08 : frameStyle === 'modern' ? 0.04 : 0.06;
@@ -70,55 +75,187 @@ export default function PhotoFrame({
     return tex;
   }, []);
 
-  // Smooth hover animation
-  useFrame(() => {
-    if (groupRef.current) {
-      groupRef.current.scale.lerp(
-        new THREE.Vector3(targetScale, targetScale, targetScale),
-        0.1
-      );
+  // GSAP animations on hover
+  useEffect(() => {
+    if (!groupRef.current) return;
+
+    if (isHovered) {
+      // Scale and pop-out animation
+      gsap.to(groupRef.current.scale, {
+        x: targetScale,
+        y: targetScale,
+        z: targetScale,
+        duration: 0.4,
+        ease: 'back.out(1.7)',
+      });
+
+      // Subtle rotation tilt
+      gsap.to(groupRef.current.rotation, {
+        x: 0.05,
+        y: rotation[1] + 0.05,
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+
+      // Move forward (pop out from wall)
+      gsap.to(groupRef.current.position, {
+        z: position[2] + targetDepth,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+
+      // Animate spotlight intensity
+      if (spotLightRef.current) {
+        gsap.to(spotLightRef.current, {
+          intensity: 3,
+          duration: 0.3,
+        });
+      }
+
+      // Fade in caption
+      if (captionRef.current) {
+        gsap.to(captionRef.current.scale, {
+          x: 1.05,
+          y: 1.05,
+          z: 1.05,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      }
+
+      // Animate frame borders
+      frameRefs.current.forEach((frame, index) => {
+        if (frame?.material) {
+          gsap.to(frame.material, {
+            emissiveIntensity: 0.3,
+            duration: 0.3,
+            delay: index * 0.05,
+          });
+        }
+      });
+    } else {
+      // Return to original state
+      gsap.to(groupRef.current.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 0.3,
+        ease: 'power2.inOut',
+      });
+
+      gsap.to(groupRef.current.rotation, {
+        x: rotation[0],
+        y: rotation[1],
+        duration: 0.3,
+        ease: 'power2.inOut',
+      });
+
+      gsap.to(groupRef.current.position, {
+        z: position[2],
+        duration: 0.3,
+        ease: 'power2.inOut',
+      });
+
+      if (spotLightRef.current) {
+        gsap.to(spotLightRef.current, {
+          intensity: 0,
+          duration: 0.3,
+        });
+      }
+
+      if (captionRef.current) {
+        gsap.to(captionRef.current.scale, {
+          x: 1,
+          y: 1,
+          z: 1,
+          duration: 0.3,
+        });
+      }
+
+      frameRefs.current.forEach((frame) => {
+        if (frame?.material) {
+          gsap.to(frame.material, {
+            emissiveIntensity: 0,
+            duration: 0.3,
+          });
+        }
+      });
     }
-  });
+  }, [isHovered, targetScale, targetDepth, rotation, position]);
 
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
+      {/* Spotlight for hover effect */}
+      <SpotLight
+        ref={spotLightRef}
+        position={[0, 0, 0.5]}
+        angle={0.6}
+        penumbra={0.5}
+        intensity={0}
+        color="#ffffff"
+        distance={2}
+      />
       {/* Frame Border - Top */}
-      <mesh position={[0, frameHeight / 2 + borderThickness / 2, 0]} castShadow>
+      <mesh 
+        ref={(el) => { if (el) frameRefs.current[0] = el; }}
+        position={[0, frameHeight / 2 + borderThickness / 2, 0]} 
+        castShadow
+      >
         <boxGeometry args={[frameWidth + borderThickness * 2, borderThickness, frameDepth]} />
         <meshStandardMaterial 
           color={frameColor} 
           roughness={frameStyle === 'modern' ? 0.3 : 0.7}
           metalness={frameStyle === 'modern' ? 0.6 : 0.1}
+          emissive={frameColor}
+          emissiveIntensity={0}
         />
       </mesh>
 
       {/* Frame Border - Bottom */}
-      <mesh position={[0, -frameHeight / 2 - borderThickness / 2, 0]} castShadow>
+      <mesh 
+        ref={(el) => { if (el) frameRefs.current[1] = el; }}
+        position={[0, -frameHeight / 2 - borderThickness / 2, 0]} 
+        castShadow
+      >
         <boxGeometry args={[frameWidth + borderThickness * 2, borderThickness, frameDepth]} />
         <meshStandardMaterial 
           color={frameColor} 
           roughness={frameStyle === 'modern' ? 0.3 : 0.7}
           metalness={frameStyle === 'modern' ? 0.6 : 0.1}
+          emissive={frameColor}
+          emissiveIntensity={0}
         />
       </mesh>
 
       {/* Frame Border - Left */}
-      <mesh position={[-frameWidth / 2 - borderThickness / 2, 0, 0]} castShadow>
+      <mesh 
+        ref={(el) => { if (el) frameRefs.current[2] = el; }}
+        position={[-frameWidth / 2 - borderThickness / 2, 0, 0]} 
+        castShadow
+      >
         <boxGeometry args={[borderThickness, frameHeight, frameDepth]} />
         <meshStandardMaterial 
           color={frameColor} 
           roughness={frameStyle === 'modern' ? 0.3 : 0.7}
           metalness={frameStyle === 'modern' ? 0.6 : 0.1}
+          emissive={frameColor}
+          emissiveIntensity={0}
         />
       </mesh>
 
       {/* Frame Border - Right */}
-      <mesh position={[frameWidth / 2 + borderThickness / 2, 0, 0]} castShadow>
+      <mesh 
+        ref={(el) => { if (el) frameRefs.current[3] = el; }}
+        position={[frameWidth / 2 + borderThickness / 2, 0, 0]} 
+        castShadow
+      >
         <boxGeometry args={[borderThickness, frameHeight, frameDepth]} />
         <meshStandardMaterial 
           color={frameColor} 
           roughness={frameStyle === 'modern' ? 0.3 : 0.7}
           metalness={frameStyle === 'modern' ? 0.6 : 0.1}
+          emissive={frameColor}
+          emissiveIntensity={0}
         />
       </mesh>
 
@@ -137,8 +274,8 @@ export default function PhotoFrame({
         <planeGeometry args={[imageWidth, imageHeight]} />
         <meshStandardMaterial 
           map={placeholderTexture}
-          emissive={isHovered ? '#ffffff' : '#000000'}
-          emissiveIntensity={isHovered ? 0.1 : 0}
+          emissive={isHovered ? '#ffb3d9' : '#000000'}
+          emissiveIntensity={isHovered ? 0.3 : 0}
         />
       </mesh>
 
@@ -166,17 +303,23 @@ export default function PhotoFrame({
 
       {/* Caption plaque */}
       {(caption || date) && (
-        <>
+        <group ref={captionRef}>
           <mesh position={[0, -frameHeight / 2 - borderThickness - 0.15, 0]}>
             <boxGeometry args={[frameWidth * 0.8, 0.15, 0.02]} />
-            <meshStandardMaterial color="#2a2a2a" metalness={0.3} roughness={0.7} />
+            <meshStandardMaterial 
+              color="#2a2a2a" 
+              metalness={0.3} 
+              roughness={0.7}
+              emissive="#d4af37"
+              emissiveIntensity={isHovered ? 0.2 : 0}
+            />
           </mesh>
           
           {caption && (
             <Text
               position={[0, -frameHeight / 2 - borderThickness - 0.12, 0.02]}
               fontSize={0.08}
-              color="#d4af37"
+              color={isHovered ? "#ffffff" : "#d4af37"}
               anchorX="center"
               anchorY="middle"
             >
@@ -188,14 +331,14 @@ export default function PhotoFrame({
             <Text
               position={[0, -frameHeight / 2 - borderThickness - 0.18, 0.02]}
               fontSize={0.06}
-              color="#999999"
+              color={isHovered ? "#cccccc" : "#999999"}
               anchorX="center"
               anchorY="middle"
             >
               {date}
             </Text>
           )}
-        </>
+        </group>
       )}
 
       {/* Glass effect overlay */}

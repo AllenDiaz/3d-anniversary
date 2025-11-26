@@ -14,15 +14,42 @@ interface PhotoData {
   imageUrl?: string;
 }
 
+type RoomName = 'main' | 'firstDate' | 'adventures' | 'specialMoments';
+
+const ROOM_POSITIONS: Record<RoomName, { camera: [number, number, number]; lookAt: [number, number, number] }> = {
+  main: { camera: [0, 1.6, 5], lookAt: [0, 1, 0] },
+  firstDate: { camera: [-10, 1.6, 4], lookAt: [-10, 1, 0] },
+  adventures: { camera: [10, 1.6, 4], lookAt: [10, 1, 0] },
+  specialMoments: { camera: [0, 1.6, -7.5], lookAt: [0, 1, -11.5] },
+};
+
 export default function Museum() {
   const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoData | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [notification, setNotification] = useState<string>('');
+  const [currentRoom, setCurrentRoom] = useState<RoomName>('main');
+  const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 1.6, 5]);
+  const [lookAtTarget, setLookAtTarget] = useState<[number, number, number]>([0, 1, 0]);
 
   const showNotification = (message: string) => {
     setNotification(message);
     setTimeout(() => setNotification(''), 2000);
+  };
+
+  const navigateToRoom = (room: RoomName) => {
+    setCurrentRoom(room);
+    setCameraTarget(ROOM_POSITIONS[room].camera);
+    setLookAtTarget(ROOM_POSITIONS[room].lookAt);
+    playClickSound();
+    
+    const roomNames: Record<RoomName, string> = {
+      main: 'Main Gallery',
+      firstDate: 'First Date Room',
+      adventures: 'Adventures Room',
+      specialMoments: 'Special Moments Room',
+    };
+    showNotification(`Entering ${roomNames[room]}...`);
   };
 
   // ESC key to close modal
@@ -62,7 +89,11 @@ export default function Museum() {
           <Lighting />
           
           {/* Camera Controls */}
-          <CameraControls mode={controlMode} />
+          <CameraControls 
+            mode={controlMode} 
+            targetPosition={cameraTarget}
+            targetLookAt={lookAtTarget}
+          />
           
           {/* Photo Frames - Main Gallery */}
           <PhotoFrame 
@@ -185,9 +216,9 @@ export default function Museum() {
             tileColor1="#f5f5f5"
             tileColor2="#e0e0e0"
             doors={[
-              { position: [-6, 0, 0], rotation: [0, Math.PI / 2, 0], label: '💕 First Date' },
-              { position: [6, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '🌍 Adventures' },
-              { position: [0, 0, -7.5], rotation: [0, 0, 0], label: '✨ Special Moments' },
+              { position: [-6, 0, 0], rotation: [0, Math.PI / 2, 0], label: '💕 First Date', onClick: () => navigateToRoom('firstDate') },
+              { position: [6, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '🌍 Adventures', onClick: () => navigateToRoom('adventures') },
+              { position: [0, 0, -7.5], rotation: [0, 0, 0], label: '✨ Special Moments', onClick: () => navigateToRoom('specialMoments') },
             ]}
           />
           
@@ -204,7 +235,7 @@ export default function Museum() {
             tileColor1="#ffe4e1"
             tileColor2="#ffc0cb"
             doors={[
-              { position: [4, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '← Main Gallery' },
+              { position: [4, 0, 0], rotation: [0, -Math.PI / 2, 0], label: '← Main Gallery', onClick: () => navigateToRoom('main') },
             ]}
           />
           
@@ -221,7 +252,7 @@ export default function Museum() {
             tileColor1="#cce5ff"
             tileColor2="#99ccff"
             doors={[
-              { position: [-4, 0, 0], rotation: [0, Math.PI / 2, 0], label: '← Main Gallery' },
+              { position: [-4, 0, 0], rotation: [0, Math.PI / 2, 0], label: '← Main Gallery', onClick: () => navigateToRoom('main') },
             ]}
           />
           
@@ -238,7 +269,7 @@ export default function Museum() {
             tileColor1="#ffe6f0"
             tileColor2="#ffccdd"
             doors={[
-              { position: [0, 0, 4], rotation: [0, Math.PI, 0], label: '← Main Gallery' },
+              { position: [0, 0, 4], rotation: [0, Math.PI, 0], label: '← Main Gallery', onClick: () => navigateToRoom('main') },
             ]}
           />
         </Suspense>
@@ -293,6 +324,53 @@ export default function Museum() {
         </button>
       </div>
 
+      {/* Room Navigation Minimap */}
+      <div className="absolute top-20 left-4 bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
+        <div className="text-white text-sm font-semibold mb-2">📍 Current Room</div>
+        <div className="grid grid-cols-2 gap-2 max-w-xs">
+          <button
+            onClick={() => navigateToRoom('main')}
+            className={`px-3 py-2 text-xs rounded transition-all ${
+              currentRoom === 'main'
+                ? 'bg-pink-500 text-white shadow-lg scale-105'
+                : 'bg-white/20 text-white/70 hover:bg-white/30'
+            }`}
+          >
+            🏛️ Main Gallery
+          </button>
+          <button
+            onClick={() => navigateToRoom('firstDate')}
+            className={`px-3 py-2 text-xs rounded transition-all ${
+              currentRoom === 'firstDate'
+                ? 'bg-pink-500 text-white shadow-lg scale-105'
+                : 'bg-white/20 text-white/70 hover:bg-white/30'
+            }`}
+          >
+            💕 First Date
+          </button>
+          <button
+            onClick={() => navigateToRoom('adventures')}
+            className={`px-3 py-2 text-xs rounded transition-all ${
+              currentRoom === 'adventures'
+                ? 'bg-pink-500 text-white shadow-lg scale-105'
+                : 'bg-white/20 text-white/70 hover:bg-white/30'
+            }`}
+          >
+            🌍 Adventures
+          </button>
+          <button
+            onClick={() => navigateToRoom('specialMoments')}
+            className={`px-3 py-2 text-xs rounded transition-all ${
+              currentRoom === 'specialMoments'
+                ? 'bg-pink-500 text-white shadow-lg scale-105'
+                : 'bg-white/20 text-white/70 hover:bg-white/30'
+            }`}
+          >
+            ✨ Special Moments
+          </button>
+        </div>
+      </div>
+
       {/* Notification Toast */}
       {notification && (
         <div className="absolute top-20 right-4 bg-pink-500 text-white px-6 py-3 rounded-lg shadow-lg animate-in slide-in-from-right duration-300">
@@ -301,13 +379,14 @@ export default function Museum() {
       )}
       
       {/* Instructions */}
-      <div className="absolute bottom-4 left-4 text-white bg-black/50 px-4 py-2 rounded">
+      <div className="absolute bottom-4 left-4 text-white bg-black/50 px-4 py-2 rounded max-w-xs">
         {controlMode === 'orbit' ? (
           <>
             <p className="text-sm">🖱️ Mouse: Look around</p>
             <p className="text-sm">🎯 Scroll: Zoom in/out</p>
             <p className="text-sm">📌 Drag: Rotate view</p>
             <p className="text-sm">🖼️ Click frames to enlarge</p>
+            <p className="text-sm">🚪 Click doors or use minimap to navigate</p>
           </>
         ) : (
           <>
@@ -316,6 +395,7 @@ export default function Museum() {
             <p className="text-sm">👀 Mouse: Look around</p>
             <p className="text-sm">ESC: Exit pointer lock</p>
             <p className="text-sm">🖼️ Click frames to enlarge</p>
+            <p className="text-sm">🚪 Walk through doors or use minimap</p>
           </>
         )}
       </div>

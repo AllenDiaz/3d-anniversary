@@ -8,6 +8,7 @@ interface DoorConfig {
   position: [number, number, number];
   rotation?: [number, number, number];
   label?: string;
+  onClick?: () => void;
 }
 
 interface RoomProps {
@@ -51,6 +52,7 @@ export default function Room({
           position={door.position}
           rotation={door.rotation}
           label={door.label}
+          onClick={door.onClick}
         />
       ))}
       {/* Floor with Tiles */}

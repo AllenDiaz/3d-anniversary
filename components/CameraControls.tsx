@@ -4,21 +4,48 @@ import { useRef, useEffect, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { PointerLockControls, OrbitControls } from '@react-three/drei';
 import { Vector3 } from 'three';
+import gsap from 'gsap';
 
 interface CameraControlsProps {
   mode: 'orbit' | 'firstPerson';
+  targetPosition?: [number, number, number];
+  targetLookAt?: [number, number, number];
 }
 
-export default function CameraControls({ mode }: CameraControlsProps) {
+export default function CameraControls({ mode, targetPosition, targetLookAt }: CameraControlsProps) {
   const { camera, gl } = useThree();
   const velocity = useRef(new Vector3());
   const direction = useRef(new Vector3());
+  const orbitControlsRef = useRef<any>(null);
   const [moveState, setMoveState] = useState({
     forward: false,
     backward: false,
     left: false,
     right: false,
   });
+
+  // Animate camera to target position
+  useEffect(() => {
+    if (targetPosition) {
+      gsap.to(camera.position, {
+        x: targetPosition[0],
+        y: targetPosition[1],
+        z: targetPosition[2],
+        duration: 1.5,
+        ease: 'power2.inOut',
+      });
+
+      if (targetLookAt && orbitControlsRef.current) {
+        gsap.to(orbitControlsRef.current.target, {
+          x: targetLookAt[0],
+          y: targetLookAt[1],
+          z: targetLookAt[2],
+          duration: 1.5,
+          ease: 'power2.inOut',
+        });
+      }
+    }
+  }, [targetPosition, targetLookAt, camera]);
 
   // First-person movement speed
   const speed = 0.1;
@@ -106,12 +133,13 @@ export default function CameraControls({ mode }: CameraControlsProps) {
   if (mode === 'orbit') {
     return (
       <OrbitControls
+        ref={orbitControlsRef}
         enableDamping
         dampingFactor={0.05}
         minDistance={2}
         maxDistance={30}
         maxPolarAngle={Math.PI / 2}
-        target={[0, 1, 0]}
+        target={targetLookAt || [0, 1, 0]}
       />
     );
   }

@@ -17,6 +17,13 @@ interface PhotoData {
 export default function Museum() {
   const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoData | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [notification, setNotification] = useState<string>('');
+
+  const showNotification = (message: string) => {
+    setNotification(message);
+    setTimeout(() => setNotification(''), 2000);
+  };
 
   // ESC key to close modal
   useEffect(() => {
@@ -28,6 +35,21 @@ export default function Museum() {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [selectedPhoto]);
+
+  const playClickSound = () => {
+    if (!soundEnabled) return;
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  };
 
   return (
     <div className="w-full h-screen">
@@ -50,7 +72,11 @@ export default function Museum() {
             frameColor="#5c4033"
             caption="Our First Meeting"
             date="January 2024"
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           <PhotoFrame 
             position={[-5.99, 2, -2]} 
@@ -61,7 +87,11 @@ export default function Museum() {
             date="February 2024"
             frameWidth={1.0}
             frameHeight={1.3}
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           
           <PhotoFrame 
@@ -71,7 +101,11 @@ export default function Museum() {
             frameColor="#2c2c2c"
             caption="Beach Adventure"
             date="March 2024"
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           <PhotoFrame 
             position={[5.99, 2, -2]} 
@@ -82,7 +116,11 @@ export default function Museum() {
             date="April 2024"
             frameWidth={1.4}
             frameHeight={1.1}
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           
           {/* Photo Frames - First Date Room */}
@@ -95,7 +133,11 @@ export default function Museum() {
             date="Valentine's Day"
             frameWidth={1.5}
             frameHeight={1.8}
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           
           {/* Photo Frames - Adventures Room */}
@@ -106,7 +148,11 @@ export default function Museum() {
             frameColor="#4a4a4a"
             caption="Mountain Hike"
             date="Summer 2024"
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           
           {/* Photo Frames - Special Moments Room */}
@@ -119,7 +165,11 @@ export default function Museum() {
             date="Our Anniversary"
             frameWidth={1.6}
             frameHeight={2.0}
-            onClick={(data) => setSelectedPhoto(data)}
+            onClick={(data) => {
+              setSelectedPhoto(data);
+              playClickSound();
+              showNotification('Opening photo...');
+            }}
           />
           
           {/* Main Gallery Room */}
@@ -199,10 +249,13 @@ export default function Museum() {
         Virtual Love Museum
       </div>
       
-      {/* Camera Mode Toggle */}
+      {/* Camera Mode Toggle & Sound */}
       <div className="absolute top-4 right-4 flex gap-2">
         <button
-          onClick={() => setControlMode('orbit')}
+          onClick={() => {
+            setControlMode('orbit');
+            playClickSound();
+          }}
           className={`px-4 py-2 rounded transition-colors ${
             controlMode === 'orbit'
               ? 'bg-pink-500 text-white'
@@ -212,7 +265,10 @@ export default function Museum() {
           🔄 Orbit View
         </button>
         <button
-          onClick={() => setControlMode('firstPerson')}
+          onClick={() => {
+            setControlMode('firstPerson');
+            playClickSound();
+          }}
           className={`px-4 py-2 rounded transition-colors ${
             controlMode === 'firstPerson'
               ? 'bg-pink-500 text-white'
@@ -221,7 +277,28 @@ export default function Museum() {
         >
           🚶 Walk Mode
         </button>
+        <button
+          onClick={() => {
+            setSoundEnabled(!soundEnabled);
+            playClickSound();
+          }}
+          className={`px-4 py-2 rounded transition-colors ${
+            soundEnabled
+              ? 'bg-green-500 text-white'
+              : 'bg-white/20 text-white hover:bg-white/30'
+          }`}
+          title={soundEnabled ? 'Sound On' : 'Sound Off'}
+        >
+          {soundEnabled ? '🔊' : '🔇'}
+        </button>
       </div>
+
+      {/* Notification Toast */}
+      {notification && (
+        <div className="absolute top-20 right-4 bg-pink-500 text-white px-6 py-3 rounded-lg shadow-lg animate-in slide-in-from-right duration-300">
+          {notification}
+        </div>
+      )}
       
       {/* Instructions */}
       <div className="absolute bottom-4 left-4 text-white bg-black/50 px-4 py-2 rounded">

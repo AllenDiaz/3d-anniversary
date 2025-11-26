@@ -13,6 +13,8 @@ interface DoorProps {
   portalColor?: string;
   label?: string;
   labelColor?: string;
+  onClick?: () => void;
+  info?: string;
 }
 
 export default function Door({
@@ -24,8 +26,11 @@ export default function Door({
   portalColor = '#000000',
   label = '',
   labelColor = '#ffffff',
+  onClick,
+  info,
 }: DoorProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
   const frameThickness = 0.15;
   const frameDepth = 0.2;
 
@@ -61,17 +66,31 @@ export default function Door({
       {/* Portal/Opening Effect */}
       <mesh
         position={[0, doorHeight / 2, 0]}
-        onPointerEnter={() => setIsHovered(true)}
-        onPointerLeave={() => setIsHovered(false)}
+        onPointerEnter={(e) => {
+          setIsHovered(true);
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerLeave={(e) => {
+          setIsHovered(false);
+          document.body.style.cursor = 'auto';
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsClicked(true);
+          setTimeout(() => setIsClicked(false), 300);
+          if (onClick) {
+            onClick();
+          }
+        }}
       >
         <planeGeometry args={[doorWidth, doorHeight]} />
         <meshStandardMaterial
-          color={isHovered ? portalColor : '#1a1a1a'}
+          color={isClicked ? '#4a4a4a' : isHovered ? portalColor : '#1a1a1a'}
           transparent
           opacity={isHovered ? 0.3 : 0.6}
           side={DoubleSide}
-          emissive={isHovered ? portalColor : '#000000'}
-          emissiveIntensity={isHovered ? 0.4 : 0}
+          emissive={isClicked ? '#ffffff' : isHovered ? portalColor : '#000000'}
+          emissiveIntensity={isClicked ? 0.8 : isHovered ? 0.4 : 0}
         />
       </mesh>
 

@@ -270,8 +270,14 @@ export default function PhotoFrame({
       {/* Photo/Image */}
       <mesh
         position={[0, 0, 0.025]}
-        onPointerEnter={() => setIsHovered(true)}
-        onPointerLeave={() => setIsHovered(false)}
+        onPointerEnter={(e) => {
+          setIsHovered(true);
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerLeave={(e) => {
+          setIsHovered(false);
+          document.body.style.cursor = 'auto';
+        }}
         onClick={(e) => {
           e.stopPropagation();
           if (onClick) {

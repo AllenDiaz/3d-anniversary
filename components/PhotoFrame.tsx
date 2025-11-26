@@ -16,6 +16,7 @@ interface PhotoFrameProps {
   frameColor?: string;
   caption?: string;
   date?: string;
+  onClick?: (data: { caption: string; date: string; imageUrl?: string }) => void;
 }
 
 export default function PhotoFrame({
@@ -28,6 +29,7 @@ export default function PhotoFrame({
   frameColor = '#8b4513',
   caption = '',
   date = '',
+  onClick,
 }: PhotoFrameProps) {
   const [isHovered, setIsHovered] = useState(false);
   const groupRef = useRef<THREE.Group>(null);
@@ -270,6 +272,12 @@ export default function PhotoFrame({
         position={[0, 0, 0.025]}
         onPointerEnter={() => setIsHovered(true)}
         onPointerLeave={() => setIsHovered(false)}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onClick) {
+            onClick({ caption, date, imageUrl });
+          }
+        }}
       >
         <planeGeometry args={[imageWidth, imageHeight]} />
         <meshStandardMaterial 

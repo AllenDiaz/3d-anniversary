@@ -2,14 +2,32 @@
 
 import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Room from './Room';
 import Lighting from './Lighting';
 import CameraControls from './CameraControls';
 import PhotoFrame from './PhotoFrame';
 
+interface PhotoData {
+  caption: string;
+  date: string;
+  imageUrl?: string;
+}
+
 export default function Museum() {
   const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
+  const [selectedPhoto, setSelectedPhoto] = useState<PhotoData | null>(null);
+
+  // ESC key to close modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedPhoto) {
+        setSelectedPhoto(null);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [selectedPhoto]);
 
   return (
     <div className="w-full h-screen">
@@ -32,6 +50,7 @@ export default function Museum() {
             frameColor="#5c4033"
             caption="Our First Meeting"
             date="January 2024"
+            onClick={(data) => setSelectedPhoto(data)}
           />
           <PhotoFrame 
             position={[-5.99, 2, -2]} 
@@ -42,6 +61,7 @@ export default function Museum() {
             date="February 2024"
             frameWidth={1.0}
             frameHeight={1.3}
+            onClick={(data) => setSelectedPhoto(data)}
           />
           
           <PhotoFrame 
@@ -51,6 +71,7 @@ export default function Museum() {
             frameColor="#2c2c2c"
             caption="Beach Adventure"
             date="March 2024"
+            onClick={(data) => setSelectedPhoto(data)}
           />
           <PhotoFrame 
             position={[5.99, 2, -2]} 
@@ -61,6 +82,7 @@ export default function Museum() {
             date="April 2024"
             frameWidth={1.4}
             frameHeight={1.1}
+            onClick={(data) => setSelectedPhoto(data)}
           />
           
           {/* Photo Frames - First Date Room */}
@@ -73,6 +95,7 @@ export default function Museum() {
             date="Valentine's Day"
             frameWidth={1.5}
             frameHeight={1.8}
+            onClick={(data) => setSelectedPhoto(data)}
           />
           
           {/* Photo Frames - Adventures Room */}
@@ -83,6 +106,7 @@ export default function Museum() {
             frameColor="#4a4a4a"
             caption="Mountain Hike"
             date="Summer 2024"
+            onClick={(data) => setSelectedPhoto(data)}
           />
           
           {/* Photo Frames - Special Moments Room */}
@@ -95,6 +119,7 @@ export default function Museum() {
             date="Our Anniversary"
             frameWidth={1.6}
             frameHeight={2.0}
+            onClick={(data) => setSelectedPhoto(data)}
           />
           
           {/* Main Gallery Room */}
@@ -205,6 +230,7 @@ export default function Museum() {
             <p className="text-sm">🖱️ Mouse: Look around</p>
             <p className="text-sm">🎯 Scroll: Zoom in/out</p>
             <p className="text-sm">📌 Drag: Rotate view</p>
+            <p className="text-sm">🖼️ Click frames to enlarge</p>
           </>
         ) : (
           <>
@@ -212,9 +238,58 @@ export default function Museum() {
             <p className="text-sm">⌨️ WASD / Arrow Keys: Move</p>
             <p className="text-sm">👀 Mouse: Look around</p>
             <p className="text-sm">ESC: Exit pointer lock</p>
+            <p className="text-sm">🖼️ Click frames to enlarge</p>
           </>
         )}
       </div>
+
+      {/* Photo Modal */}
+      {selectedPhoto && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          <div 
+            className="relative max-w-5xl max-h-[90vh] animate-in zoom-in duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setSelectedPhoto(null)}
+              className="absolute -top-12 right-0 text-white hover:text-pink-400 transition-colors text-4xl font-light"
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            {/* Photo container with frame effect */}
+            <div className="bg-gradient-to-br from-amber-900 to-amber-950 p-8 rounded-lg shadow-2xl">
+              {/* Inner mat */}
+              <div className="bg-cream p-6">
+                {/* Photo */}
+                <div className="relative bg-gradient-to-br from-pink-200 via-pink-100 to-pink-50 aspect-[4/5] w-[600px] flex items-center justify-center shadow-inner">
+                  <div className="text-9xl">💕</div>
+                </div>
+              </div>
+              
+              {/* Caption plaque */}
+              <div className="mt-6 bg-zinc-900 py-3 px-6 rounded text-center">
+                <h3 className="text-2xl font-semibold text-amber-400 mb-1">
+                  {selectedPhoto.caption}
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  {selectedPhoto.date}
+                </p>
+              </div>
+            </div>
+
+            {/* Helper text */}
+            <p className="text-center text-white/60 mt-4 text-sm">
+              Click outside or press ESC to close
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

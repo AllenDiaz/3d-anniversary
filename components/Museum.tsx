@@ -1,12 +1,15 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import { Suspense } from 'react';
+import { PerspectiveCamera } from '@react-three/drei';
+import { Suspense, useState } from 'react';
 import Room from './Room';
 import Lighting from './Lighting';
+import CameraControls from './CameraControls';
 
 export default function Museum() {
+  const [controlMode, setControlMode] = useState<'orbit' | 'firstPerson'>('orbit');
+
   return (
     <div className="w-full h-screen">
       <Canvas shadows>
@@ -17,14 +20,8 @@ export default function Museum() {
           {/* Lighting System */}
           <Lighting />
           
-          {/* Controls */}
-          <OrbitControls
-            enableDamping
-            dampingFactor={0.05}
-            minDistance={2}
-            maxDistance={20}
-            maxPolarAngle={Math.PI / 2}
-          />
+          {/* Camera Controls */}
+          <CameraControls mode={controlMode} />
           
           {/* Main Gallery Room */}
           <Room 
@@ -89,10 +86,46 @@ export default function Museum() {
         Virtual Love Museum
       </div>
       
+      {/* Camera Mode Toggle */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        <button
+          onClick={() => setControlMode('orbit')}
+          className={`px-4 py-2 rounded transition-colors ${
+            controlMode === 'orbit'
+              ? 'bg-pink-500 text-white'
+              : 'bg-white/20 text-white hover:bg-white/30'
+          }`}
+        >
+          🔄 Orbit View
+        </button>
+        <button
+          onClick={() => setControlMode('firstPerson')}
+          className={`px-4 py-2 rounded transition-colors ${
+            controlMode === 'firstPerson'
+              ? 'bg-pink-500 text-white'
+              : 'bg-white/20 text-white hover:bg-white/30'
+          }`}
+        >
+          🚶 Walk Mode
+        </button>
+      </div>
+      
       {/* Instructions */}
       <div className="absolute bottom-4 left-4 text-white bg-black/50 px-4 py-2 rounded">
-        <p className="text-sm">🖱️ Mouse: Look around</p>
-        <p className="text-sm">🎯 Scroll: Zoom in/out</p>
+        {controlMode === 'orbit' ? (
+          <>
+            <p className="text-sm">🖱️ Mouse: Look around</p>
+            <p className="text-sm">🎯 Scroll: Zoom in/out</p>
+            <p className="text-sm">📌 Drag: Rotate view</p>
+          </>
+        ) : (
+          <>
+            <p className="text-sm">🖱️ Click to lock cursor</p>
+            <p className="text-sm">⌨️ WASD / Arrow Keys: Move</p>
+            <p className="text-sm">👀 Mouse: Look around</p>
+            <p className="text-sm">ESC: Exit pointer lock</p>
+          </>
+        )}
       </div>
     </div>
   );

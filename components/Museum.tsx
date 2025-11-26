@@ -19,6 +19,7 @@ import {
   Table, 
   RoomSign 
 } from './RoomDecor';
+import ExhibitDescription from './ExhibitDescription';
 
 type RoomName = 'main' | 'firstDate' | 'adventures' | 'specialMoments';
 
@@ -102,78 +103,173 @@ export default function Museum() {
             targetLookAt={lookAtTarget}
           />
           
-          {/* Photo Frames - Data Driven */}
-          {getMemoriesByRoom('main').map((memory) => (
-            <PhotoFrame
-              key={memory.id}
-              position={memory.position}
-              rotation={memory.rotation}
-              frameStyle={memory.frameStyle}
-              caption={memory.title}
-              date={memory.date}
-              frameWidth={memory.size.width}
-              frameHeight={memory.size.height}
-              onClick={() => {
-                setSelectedMemory(memory);
-                playClickSound();
-                showNotification(`Opening ${memory.title}...`);
-              }}
-            />
-          ))}
+          {/* Photo Frames - Data Driven with Descriptions */}
+          {getMemoriesByRoom('main').map((memory) => {
+            // Calculate description position based on frame position
+            const isLeftWall = memory.position[0] < -5;
+            const isRightWall = memory.position[0] > 5;
+            const descOffset = isLeftWall ? [0.7, -0.8, 0] : isRightWall ? [-0.7, -0.8, 0] : [0, -1.2, 0];
+            
+            return (
+              <group key={memory.id}>
+                <PhotoFrame
+                  position={memory.position}
+                  rotation={memory.rotation}
+                  frameStyle={memory.frameStyle}
+                  caption={memory.title}
+                  date={memory.date}
+                  frameWidth={memory.size.width}
+                  frameHeight={memory.size.height}
+                  onClick={() => {
+                    setSelectedMemory(memory);
+                    playClickSound();
+                    showNotification(`Opening ${memory.title}...`);
+                  }}
+                />
+                <ExhibitDescription
+                  position={[
+                    memory.position[0] + descOffset[0] as number,
+                    memory.position[1] + descOffset[1] as number,
+                    memory.position[2] + descOffset[2] as number
+                  ]}
+                  rotation={memory.rotation}
+                  title={memory.title}
+                  description={memory.description}
+                  date={memory.date}
+                  location={memory.location}
+                  tags={memory.tags?.slice(0, 3)}
+                  width={memory.size.width}
+                />
+              </group>
+            );
+          })}
           
-          {getMemoriesByRoom('firstDate').map((memory) => (
-            <PhotoFrame
-              key={memory.id}
-              position={memory.position}
-              rotation={memory.rotation}
-              frameStyle={memory.frameStyle}
-              caption={memory.title}
-              date={memory.date}
-              frameWidth={memory.size.width}
-              frameHeight={memory.size.height}
-              onClick={() => {
-                setSelectedMemory(memory);
-                playClickSound();
-                showNotification(`Opening ${memory.title}...`);
-              }}
-            />
-          ))}
+          {getMemoriesByRoom('firstDate').map((memory) => {
+            // Calculate description position for First Date room
+            const isWestWall = memory.position[0] < -13;
+            const isNorthWall = memory.position[2] < -2;
+            const isSouthWall = memory.position[2] > 2;
+            const descOffset = isWestWall ? [0.7, -0.8, 0] : isNorthWall ? [0, -1, 0.5] : isSouthWall ? [0, -1, -0.5] : [0, -1.2, 0];
+            
+            return (
+              <group key={memory.id}>
+                <PhotoFrame
+                  position={memory.position}
+                  rotation={memory.rotation}
+                  frameStyle={memory.frameStyle}
+                  caption={memory.title}
+                  date={memory.date}
+                  frameWidth={memory.size.width}
+                  frameHeight={memory.size.height}
+                  onClick={() => {
+                    setSelectedMemory(memory);
+                    playClickSound();
+                    showNotification(`Opening ${memory.title}...`);
+                  }}
+                />
+                <ExhibitDescription
+                  position={[
+                    memory.position[0] + descOffset[0] as number,
+                    memory.position[1] + descOffset[1] as number,
+                    memory.position[2] + descOffset[2] as number
+                  ]}
+                  rotation={memory.rotation}
+                  title={memory.title}
+                  description={memory.description}
+                  date={memory.date}
+                  location={memory.location}
+                  tags={memory.tags?.slice(0, 3)}
+                  width={memory.size.width}
+                  backgroundColor="#2d1f1f"
+                  textColor="#ffb3d9"
+                />
+              </group>
+            );
+          })}
           
-          {getMemoriesByRoom('adventures').map((memory) => (
-            <PhotoFrame
-              key={memory.id}
-              position={memory.position}
-              rotation={memory.rotation}
-              frameStyle={memory.frameStyle}
-              caption={memory.title}
-              date={memory.date}
-              frameWidth={memory.size.width}
-              frameHeight={memory.size.height}
-              onClick={() => {
-                setSelectedMemory(memory);
-                playClickSound();
-                showNotification(`Opening ${memory.title}...`);
-              }}
-            />
-          ))}
+          {getMemoriesByRoom('adventures').map((memory) => {
+            // Calculate description position for Adventures room
+            const isEastWall = memory.position[0] > 13;
+            const isNorthWall = memory.position[2] < -2;
+            const isSouthWall = memory.position[2] > 2;
+            const descOffset = isEastWall ? [-0.7, -0.8, 0] : isNorthWall ? [0, -1, 0.5] : isSouthWall ? [0, -1, -0.5] : [0, -1.2, 0];
+            
+            return (
+              <group key={memory.id}>
+                <PhotoFrame
+                  position={memory.position}
+                  rotation={memory.rotation}
+                  frameStyle={memory.frameStyle}
+                  caption={memory.title}
+                  date={memory.date}
+                  frameWidth={memory.size.width}
+                  frameHeight={memory.size.height}
+                  onClick={() => {
+                    setSelectedMemory(memory);
+                    playClickSound();
+                    showNotification(`Opening ${memory.title}...`);
+                  }}
+                />
+                <ExhibitDescription
+                  position={[
+                    memory.position[0] + descOffset[0] as number,
+                    memory.position[1] + descOffset[1] as number,
+                    memory.position[2] + descOffset[2] as number
+                  ]}
+                  rotation={memory.rotation}
+                  title={memory.title}
+                  description={memory.description}
+                  date={memory.date}
+                  location={memory.location}
+                  tags={memory.tags?.slice(0, 3)}
+                  width={memory.size.width}
+                  backgroundColor="#1f2d2d"
+                  textColor="#b3d9ff"
+                />
+              </group>
+            );
+          })}
           
-          {getMemoriesByRoom('specialMoments').map((memory) => (
-            <PhotoFrame
-              key={memory.id}
-              position={memory.position}
-              rotation={memory.rotation}
-              frameStyle={memory.frameStyle}
-              caption={memory.title}
-              date={memory.date}
-              frameWidth={memory.size.width}
-              frameHeight={memory.size.height}
-              onClick={() => {
-                setSelectedMemory(memory);
-                playClickSound();
-                showNotification(`Opening ${memory.title}...`);
-              }}
-            />
-          ))}
+          {getMemoriesByRoom('specialMoments').map((memory) => {
+            // Calculate description position for Special Moments room
+            const isNorthWall = memory.position[2] < -14;
+            const descOffset = isNorthWall ? [0, -1.2, 0.5] : [0, -1.2, 0];
+            
+            return (
+              <group key={memory.id}>
+                <PhotoFrame
+                  position={memory.position}
+                  rotation={memory.rotation}
+                  frameStyle={memory.frameStyle}
+                  caption={memory.title}
+                  date={memory.date}
+                  frameWidth={memory.size.width}
+                  frameHeight={memory.size.height}
+                  onClick={() => {
+                    setSelectedMemory(memory);
+                    playClickSound();
+                    showNotification(`Opening ${memory.title}...`);
+                  }}
+                />
+                <ExhibitDescription
+                  position={[
+                    memory.position[0] + descOffset[0] as number,
+                    memory.position[1] + descOffset[1] as number,
+                    memory.position[2] + descOffset[2] as number
+                  ]}
+                  rotation={memory.rotation}
+                  title={memory.title}
+                  description={memory.description}
+                  date={memory.date}
+                  location={memory.location}
+                  tags={memory.tags?.slice(0, 3)}
+                  width={memory.size.width}
+                  backgroundColor="#2d1f2d"
+                  textColor="#ffccff"
+                />
+              </group>
+            );
+          })}
           
           {/* Main Gallery Room */}
           <Room 

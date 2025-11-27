@@ -21,6 +21,7 @@ import {
 } from './RoomDecor';
 import ExhibitDescription from './ExhibitDescription';
 import Timeline from './Timeline';
+import { FallingPetals, FloatingHearts as FloatingHeartsParticles, Sparkles, DustMotes, MagicStars } from './ParticleEffects';
 
 type RoomName = 'main' | 'firstDate' | 'adventures' | 'specialMoments';
 
@@ -317,6 +318,24 @@ export default function Museum() {
             color="#d4af37"
           />
           
+          {/* Particle Effects - Main Gallery */}
+          <DustMotes
+            count={25}
+            position={[0, 2, 0]}
+            spread={[12, 3.5, 12]}
+            color="#ffffff"
+            size={0.025}
+            speed={0.1}
+          />
+          <Sparkles
+            count={15}
+            position={[0, 3, 0]}
+            spread={[12, 1, 12]}
+            color="#d4af37"
+            size={0.04}
+            speed={0.5}
+          />
+          
           {/* First Date Room - Left */}
           <Room 
             width={8}
@@ -357,6 +376,24 @@ export default function Museum() {
             text="'The best thing to hold onto in life is each other'"
             fontSize={0.15}
             color="#ff69b4"
+          />
+          
+          {/* Particle Effects - First Date Room */}
+          <FallingPetals
+            count={25}
+            position={[-10, 3.5, 0]}
+            spread={[7, 1, 7]}
+            color="#ffb3d9"
+            size={0.08}
+            speed={0.4}
+          />
+          <FloatingHeartsParticles
+            count={15}
+            position={[-10, 0.5, 0]}
+            spread={[7, 2.5, 7]}
+            color="#ff69b4"
+            size={0.08}
+            speed={0.25}
           />
           
           {/* Adventures Room - Right */}
@@ -404,6 +441,24 @@ export default function Museum() {
           <DecorativePlant position={[8.5, 0, 3.5]} scale={1} color="#2d5016" />
           <DecorativePlant position={[8.5, 0, -3.5]} scale={1} color="#2d5016" />
           
+          {/* Particle Effects - Adventures Room */}
+          <DustMotes
+            count={30}
+            position={[10, 2, 0]}
+            spread={[7, 3, 7]}
+            color="#b3d9ff"
+            size={0.04}
+            speed={0.15}
+          />
+          <Sparkles
+            count={20}
+            position={[10, 2.5, 0]}
+            spread={[7, 2, 7]}
+            color="#4da6ff"
+            size={0.06}
+            speed={0.8}
+          />
+          
           {/* Special Moments Room - Back */}
           <Room 
             width={10}
@@ -445,6 +500,32 @@ export default function Museum() {
             text="'In all the world, there is no heart for me like yours'"
             fontSize={0.15}
             color="#ff99cc"
+          />
+          
+          {/* Particle Effects - Special Moments Room */}
+          <MagicStars
+            count={40}
+            position={[0, 2.5, -11.5]}
+            spread={[9, 3, 7]}
+            color="#ffccff"
+            size={0.07}
+            speed={0.6}
+          />
+          <Sparkles
+            count={30}
+            position={[0, 3, -11.5]}
+            spread={[9, 2, 7]}
+            color="#ff99cc"
+            size={0.05}
+            speed={1.2}
+          />
+          <FloatingHeartsParticles
+            count={12}
+            position={[0, 0.5, -11.5]}
+            spread={[9, 2, 7]}
+            color="#ffb3d9"
+            size={0.09}
+            speed={0.2}
           />
         </Suspense>
       </Canvas>

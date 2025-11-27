@@ -42,6 +42,7 @@ export default function Museum() {
   const [isTimelineOpen, setIsTimelineOpen] = useState<boolean>(false);
   const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 1.6, 5]);
   const [lookAtTarget, setLookAtTarget] = useState<[number, number, number]>([0, 1, 0]);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -49,18 +50,26 @@ export default function Museum() {
   };
 
   const navigateToRoom = (room: RoomName) => {
-    setCurrentRoom(room);
-    setCameraTarget(ROOM_POSITIONS[room].camera);
-    setLookAtTarget(ROOM_POSITIONS[room].lookAt);
+    // Fade out transition
+    setIsTransitioning(true);
     playClickSound();
     
-    const roomNames: Record<RoomName, string> = {
-      main: 'Main Gallery',
-      firstDate: 'First Date Room',
-      adventures: 'Adventures Room',
-      specialMoments: 'Special Moments Room',
-    };
-    showNotification(`Entering ${roomNames[room]}...`);
+    setTimeout(() => {
+      setCurrentRoom(room);
+      setCameraTarget(ROOM_POSITIONS[room].camera);
+      setLookAtTarget(ROOM_POSITIONS[room].lookAt);
+      
+      const roomNames: Record<RoomName, string> = {
+        main: 'Main Gallery',
+        firstDate: 'First Date Room',
+        adventures: 'Adventures Room',
+        specialMoments: 'Special Moments Room',
+      };
+      showNotification(`Entering ${roomNames[room]}...`);
+      
+      // Fade in
+      setTimeout(() => setIsTransitioning(false), 100);
+    }, 300);
   };
 
   // ESC key to close modal or timeline
@@ -582,53 +591,58 @@ export default function Museum() {
       {/* Timeline Button */}
       <button
         onClick={() => setIsTimelineOpen(true)}
-        className="absolute top-4 right-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all hover:scale-105 flex items-center gap-2 font-semibold"
+        className="absolute top-4 right-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 font-semibold"
+        style={{ animation: 'slideUp 0.5s ease-out 0.15s both' }}
       >
         <span className="text-xl">📅</span>
         <span>Timeline</span>
       </button>
 
       {/* Room Navigation Minimap */}
-      <div className="absolute top-20 left-4 bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
+      <div className="absolute top-20 left-4 bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg transition-all duration-300" style={{ animation: 'slideUp 0.5s ease-out 0.2s both' }}>
         <div className="text-white text-sm font-semibold mb-2">📍 Current Room</div>
         <div className="grid grid-cols-2 gap-2 max-w-xs">
           <button
             onClick={() => navigateToRoom('main')}
-            className={`px-3 py-2 text-xs rounded transition-all ${
+            className={`px-3 py-2 text-xs rounded transition-all duration-300 hover:scale-105 ${
               currentRoom === 'main'
                 ? 'bg-pink-500 text-white shadow-lg scale-105'
                 : 'bg-white/20 text-white/70 hover:bg-white/30'
             }`}
+            style={{ animation: 'slideUp 0.5s ease-out 0.3s both' }}
           >
             🏛️ Main Gallery
           </button>
           <button
             onClick={() => navigateToRoom('firstDate')}
-            className={`px-3 py-2 text-xs rounded transition-all ${
+            className={`px-3 py-2 text-xs rounded transition-all duration-300 hover:scale-105 ${
               currentRoom === 'firstDate'
                 ? 'bg-pink-500 text-white shadow-lg scale-105'
                 : 'bg-white/20 text-white/70 hover:bg-white/30'
             }`}
+            style={{ animation: 'slideUp 0.5s ease-out 0.35s both' }}
           >
             💕 First Date
           </button>
           <button
             onClick={() => navigateToRoom('adventures')}
-            className={`px-3 py-2 text-xs rounded transition-all ${
+            className={`px-3 py-2 text-xs rounded transition-all duration-300 hover:scale-105 ${
               currentRoom === 'adventures'
                 ? 'bg-pink-500 text-white shadow-lg scale-105'
                 : 'bg-white/20 text-white/70 hover:bg-white/30'
             }`}
+            style={{ animation: 'slideUp 0.5s ease-out 0.4s both' }}
           >
             🌍 Adventures
           </button>
           <button
             onClick={() => navigateToRoom('specialMoments')}
-            className={`px-3 py-2 text-xs rounded transition-all ${
+            className={`px-3 py-2 text-xs rounded transition-all duration-300 hover:scale-105 ${
               currentRoom === 'specialMoments'
                 ? 'bg-pink-500 text-white shadow-lg scale-105'
                 : 'bg-white/20 text-white/70 hover:bg-white/30'
             }`}
+            style={{ animation: 'slideUp 0.5s ease-out 0.45s both' }}
           >
             ✨ Special Moments
           </button>
@@ -669,11 +683,13 @@ export default function Museum() {
         const story = getStoryByMemoryId(selectedMemory.id);
         return (
           <div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-300 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 transition-all duration-300 ease-out"
+            style={{ animation: 'fadeIn 0.3s ease-out' }}
             onClick={() => setSelectedMemory(null)}
           >
             <div 
-              className="relative max-w-4xl max-h-[90vh] overflow-y-auto animate-in zoom-in duration-300"
+              className="relative max-w-4xl max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out"
+              style={{ animation: 'scaleIn 0.3s ease-out' }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
@@ -769,6 +785,14 @@ export default function Museum() {
           showNotification(`Opening ${memory.title}...`);
         }}
       />
+
+      {/* Room Transition Overlay */}
+      {isTransitioning && (
+        <div 
+          className="fixed inset-0 z-50 bg-black pointer-events-none transition-opacity duration-300"
+          style={{ opacity: 1 }}
+        />
+      )}
     </div>
   );
 }

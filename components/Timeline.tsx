@@ -67,7 +67,8 @@ export default function Timeline({ isOpen, onClose, timeline, onMemoryClick }: T
       {/* Timeline Panel */}
       <div 
         ref={timelineRef}
-        className="relative w-full max-w-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 shadow-2xl overflow-hidden animate-in slide-in-from-left duration-500"
+        className="relative w-full max-w-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 shadow-2xl overflow-hidden transition-all duration-500 ease-out"
+        style={{ animation: 'slideInLeft 0.5s ease-out' }}
       >
         {/* Header */}
         <div className="sticky top-0 z-10 bg-gradient-to-r from-amber-900 to-amber-950 px-6 py-4 shadow-lg border-b border-amber-700">

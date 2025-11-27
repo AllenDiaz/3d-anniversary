@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Text } from '@react-three/drei';
 import { DoubleSide } from 'three';
+import * as THREE from 'three';
+import gsap from 'gsap';
 
 interface DoorProps {
   position: [number, number, number];
@@ -31,11 +33,65 @@ export default function Door({
 }: DoorProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const groupRef = useRef<THREE.Group>(null);
+  const portalRef = useRef<THREE.Mesh>(null);
   const frameThickness = 0.15;
   const frameDepth = 0.2;
 
+  // GSAP animations for hover
+  useEffect(() => {
+    if (!groupRef.current || !portalRef.current) return;
+
+    if (isHovered) {
+      // Subtle scale animation
+      gsap.to(groupRef.current.scale, {
+        x: 1.02,
+        y: 1.02,
+        z: 1.02,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+
+      // Portal glow animation
+      if (portalRef.current.material && 'emissiveIntensity' in portalRef.current.material) {
+        gsap.to(portalRef.current.material, {
+          emissiveIntensity: 0.5,
+          duration: 0.3,
+        });
+      }
+    } else {
+      gsap.to(groupRef.current.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 0.3,
+        ease: 'power2.inOut',
+      });
+
+      if (portalRef.current.material && 'emissiveIntensity' in portalRef.current.material) {
+        gsap.to(portalRef.current.material, {
+          emissiveIntensity: 0,
+          duration: 0.3,
+        });
+      }
+    }
+  }, [isHovered]);
+
+  // Click ripple effect
+  useEffect(() => {
+    if (isClicked && portalRef.current) {
+      const material = portalRef.current.material as THREE.MeshStandardMaterial;
+      gsap.to(material, {
+        emissiveIntensity: 1,
+        duration: 0.1,
+        yoyo: true,
+        repeat: 1,
+      });
+    }
+  }, [isClicked]);
+
   return (
-    <group position={position} rotation={rotation}>
+    <group ref={groupRef} position={position} rotation={rotation}>
       {/* Door Frame - Left */}
       <mesh 
         position={[-doorWidth / 2 - frameThickness / 2, doorHeight / 2, 0]}
@@ -65,6 +121,7 @@ export default function Door({
 
       {/* Portal/Opening Effect */}
       <mesh
+        ref={portalRef}
         position={[0, doorHeight / 2, 0]}
         onPointerEnter={(e) => {
           setIsHovered(true);

@@ -9,7 +9,7 @@ export const firstDateMemories: Memory[] = [
     description: 'The moment our eyes first met at the coffee shop',
     room: 'firstDate',
     frameStyle: 'ornate',
-    position: [-13.99, 2, 0],
+    position: [-13.8, 2, 0],
     rotation: [0, Math.PI / 2, 0],
     size: {
       width: 1.5,
@@ -27,7 +27,7 @@ export const firstDateMemories: Memory[] = [
     description: 'That little Italian restaurant where we talked for hours',
     room: 'firstDate',
     frameStyle: 'classic',
-    position: [-10, 2, -3.5],
+    position: [-10, 2, -3.8],
     rotation: [0, 0, 0],
     size: {
       width: 1.2,
@@ -45,7 +45,7 @@ export const firstDateMemories: Memory[] = [
     description: 'Got caught in the rain, shared your umbrella',
     room: 'firstDate',
     frameStyle: 'modern',
-    position: [-10, 2, 3.5],
+    position: [-10, 2, 3.8],
     rotation: [0, Math.PI, 0],
     size: {
       width: 1.0,
@@ -183,8 +183,8 @@ export const mainGalleryMemories: Memory[] = [
     description: 'A collection of our most cherished moments',
     room: 'main',
     frameStyle: 'ornate',
-    position: [0, 2, -7.4],
-    rotation: [0, 0, 0],
+    position: [-5.9, 2, -2],
+    rotation: [0, Math.PI / 2, 0],
     size: {
       width: 2.0,
       height: 1.5,
@@ -201,7 +201,7 @@ export const mainGalleryMemories: Memory[] = [
     description: 'Golden hour magic - perfect moment frozen in time',
     room: 'main',
     frameStyle: 'classic',
-    position: [5.99, 2, -2],
+    position: [5.9, 2, -2],
     rotation: [0, -Math.PI / 2, 0],
     size: {
       width: 1.4,
@@ -219,7 +219,7 @@ export const mainGalleryMemories: Memory[] = [
     description: 'Coffee, pancakes, and your smile - perfect morning',
     room: 'main',
     frameStyle: 'modern',
-    position: [5.99, 2, 2],
+    position: [5.9, 2, 2],
     rotation: [0, -Math.PI / 2, 0],
     size: {
       width: 1.3,

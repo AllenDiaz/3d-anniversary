@@ -544,59 +544,62 @@ export default function Museum() {
         Virtual Love Museum
       </div>
       
-      {/* Camera Mode Toggle & Sound */}
-      <div className="absolute top-4 right-4 flex gap-2">
+      {/* Top Control Bar - Camera Mode, Timeline & Sound */}
+      <div className="absolute top-4 right-4 flex gap-2 items-center">
         <button
           onClick={() => {
             setControlMode('orbit');
             playClickSound();
           }}
-          className={`px-4 py-2 rounded transition-colors ${
+          className={`px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 font-semibold ${
             controlMode === 'orbit'
               ? 'bg-pink-500 text-white'
-              : 'bg-white/20 text-white hover:bg-white/30'
+              : 'bg-black/60 backdrop-blur-sm text-white hover:bg-black/80'
           }`}
+          style={{ animation: 'slideUp 0.5s ease-out 0.1s both' }}
         >
-          🔄 Orbit View
+          <span className="text-xl">🔄</span>
+          <span>Orbit View</span>
         </button>
         <button
           onClick={() => {
             setControlMode('firstPerson');
             playClickSound();
           }}
-          className={`px-4 py-2 rounded transition-colors ${
+          className={`px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 font-semibold ${
             controlMode === 'firstPerson'
               ? 'bg-pink-500 text-white'
-              : 'bg-white/20 text-white hover:bg-white/30'
+              : 'bg-black/60 backdrop-blur-sm text-white hover:bg-black/80'
           }`}
+          style={{ animation: 'slideUp 0.5s ease-out 0.15s both' }}
         >
-          🚶 Walk Mode
+          <span className="text-xl">🚶</span>
+          <span>Walk Mode</span>
+        </button>
+        <button
+          onClick={() => setIsTimelineOpen(true)}
+          className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 font-semibold"
+          style={{ animation: 'slideUp 0.5s ease-out 0.2s both' }}
+        >
+          <span className="text-xl">📅</span>
+          <span>Timeline</span>
         </button>
         <button
           onClick={() => {
             setSoundEnabled(!soundEnabled);
             playClickSound();
           }}
-          className={`px-4 py-2 rounded transition-colors ${
+          className={`px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center font-semibold ${
             soundEnabled
               ? 'bg-green-500 text-white'
-              : 'bg-white/20 text-white hover:bg-white/30'
+              : 'bg-black/60 backdrop-blur-sm text-white hover:bg-black/80'
           }`}
+          style={{ animation: 'slideUp 0.5s ease-out 0.25s both' }}
           title={soundEnabled ? 'Sound On' : 'Sound Off'}
         >
-          {soundEnabled ? '🔊' : '🔇'}
+          <span className="text-2xl">{soundEnabled ? '🔊' : '🔇'}</span>
         </button>
       </div>
-
-      {/* Timeline Button */}
-      <button
-        onClick={() => setIsTimelineOpen(true)}
-        className="absolute top-4 right-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 font-semibold"
-        style={{ animation: 'slideUp 0.5s ease-out 0.15s both' }}
-      >
-        <span className="text-xl">📅</span>
-        <span>Timeline</span>
-      </button>
 
       {/* Room Navigation Minimap */}
       <div className="absolute top-20 left-4 bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg transition-all duration-300" style={{ animation: 'slideUp 0.5s ease-out 0.2s both' }}>

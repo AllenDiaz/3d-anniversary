@@ -43,6 +43,7 @@ export default function Museum() {
   const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 1.6, 5]);
   const [lookAtTarget, setLookAtTarget] = useState<[number, number, number]>([0, 1, 0]);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number>(0);
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -78,6 +79,7 @@ export default function Museum() {
       if (e.key === 'Escape') {
         if (selectedMemory) {
           setSelectedMemory(null);
+          setCurrentPhotoIndex(0);
         } else if (isTimelineOpen) {
           setIsTimelineOpen(false);
         }
@@ -86,6 +88,27 @@ export default function Museum() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedMemory, isTimelineOpen]);
+
+  // Arrow keys for photo navigation
+  useEffect(() => {
+    if (!selectedMemory) return;
+    
+    const photos = selectedMemory.photos || [];
+    if (photos.length <= 1) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        setCurrentPhotoIndex((prev) => (prev - 1 + photos.length) % photos.length);
+        playClickSound();
+      } else if (e.key === 'ArrowRight') {
+        setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
+        playClickSound();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedMemory, currentPhotoIndex, soundEnabled]);
 
   const playClickSound = () => {
     if (!soundEnabled) return;
@@ -138,6 +161,7 @@ export default function Museum() {
                   frameHeight={memory.size.height}
                   onClick={() => {
                     setSelectedMemory(memory);
+                    setCurrentPhotoIndex(0);
                     playClickSound();
                     showNotification(`Opening ${memory.title}...`);
                   }}
@@ -179,6 +203,7 @@ export default function Museum() {
                   frameHeight={memory.size.height}
                   onClick={() => {
                     setSelectedMemory(memory);
+                    setCurrentPhotoIndex(0);
                     playClickSound();
                     showNotification(`Opening ${memory.title}...`);
                   }}
@@ -222,6 +247,7 @@ export default function Museum() {
                   frameHeight={memory.size.height}
                   onClick={() => {
                     setSelectedMemory(memory);
+                    setCurrentPhotoIndex(0);
                     playClickSound();
                     showNotification(`Opening ${memory.title}...`);
                   }}
@@ -263,6 +289,7 @@ export default function Museum() {
                   frameHeight={memory.size.height}
                   onClick={() => {
                     setSelectedMemory(memory);
+                    setCurrentPhotoIndex(0);
                     playClickSound();
                     showNotification(`Opening ${memory.title}...`);
                   }}
@@ -684,6 +711,19 @@ export default function Museum() {
       {/* Memory Modal with Story */}
       {selectedMemory && (() => {
         const story = getStoryByMemoryId(selectedMemory.id);
+        const photos = selectedMemory.photos || [{ gradient: 'from-pink-200 via-pink-100 to-pink-50' }];
+        const hasMultiplePhotos = photos.length > 1;
+
+        const nextPhoto = () => {
+          setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
+          playClickSound();
+        };
+
+        const prevPhoto = () => {
+          setCurrentPhotoIndex((prev) => (prev - 1 + photos.length) % photos.length);
+          playClickSound();
+        };
+
         return (
           <div 
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 transition-all duration-300 ease-out"
@@ -706,11 +746,80 @@ export default function Museum() {
 
               {/* Memory container */}
               <div className="bg-gradient-to-br from-amber-900 to-amber-950 p-6 rounded-lg shadow-2xl">
-                {/* Photo */}
-                <div className="bg-cream p-4 mb-4">
-                  <div className="relative bg-gradient-to-br from-pink-200 via-pink-100 to-pink-50 aspect-[4/3] w-full flex items-center justify-center shadow-inner">
-                    <div className="text-8xl">💕</div>
+                {/* Photo Slideshow */}
+                <div className="bg-cream p-4 mb-4 relative">
+                  <div 
+                    className={`relative bg-gradient-to-br ${photos[currentPhotoIndex].gradient} aspect-[4/3] w-full flex items-center justify-center shadow-inner transition-all duration-500 ease-in-out`}
+                    key={currentPhotoIndex}
+                  >
+                    {photos[currentPhotoIndex].url ? (
+                      <img 
+                        src={photos[currentPhotoIndex].url} 
+                        alt={photos[currentPhotoIndex].caption || selectedMemory.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-8xl">💕</div>
+                    )}
                   </div>
+
+                  {/* Photo Caption */}
+                  {photos[currentPhotoIndex].caption && (
+                    <div className="absolute bottom-8 left-8 right-8 bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded text-sm text-center">
+                      {photos[currentPhotoIndex].caption}
+                    </div>
+                  )}
+
+                  {/* Navigation Arrows */}
+                  {hasMultiplePhotos && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          prevPhoto();
+                        }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
+                        aria-label="Previous photo"
+                      >
+                        <span className="text-2xl">←</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          nextPhoto();
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
+                        aria-label="Next photo"
+                      >
+                        <span className="text-2xl">→</span>
+                      </button>
+
+                      {/* Photo Counter */}
+                      <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        {currentPhotoIndex + 1} / {photos.length}
+                      </div>
+
+                      {/* Dots Indicator */}
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+                        {photos.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCurrentPhotoIndex(index);
+                              playClickSound();
+                            }}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                              index === currentPhotoIndex 
+                                ? 'bg-white scale-125' 
+                                : 'bg-white/40 hover:bg-white/60'
+                            }`}
+                            aria-label={`Go to photo ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
                 
                 {/* Memory Details */}
@@ -768,9 +877,12 @@ export default function Museum() {
               </div>
 
               {/* Helper text */}
-              <p className="text-center text-white/60 mt-4 text-sm">
-                Click outside or press ESC to close
-              </p>
+              <div className="text-center text-white/60 mt-4 text-sm space-y-1">
+                {hasMultiplePhotos && (
+                  <p>← → Arrow keys or click to navigate photos</p>
+                )}
+                <p>Click outside or press ESC to close</p>
+              </div>
             </div>
           </div>
         );
@@ -783,6 +895,7 @@ export default function Museum() {
         timeline={timeline}
         onMemoryClick={(memory: Memory) => {
           setSelectedMemory(memory);
+          setCurrentPhotoIndex(0);
           setIsTimelineOpen(false);
           playClickSound();
           showNotification(`Opening ${memory.title}...`);

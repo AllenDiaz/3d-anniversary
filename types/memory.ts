@@ -5,6 +5,11 @@ export interface Memory {
   date: string; // ISO format: YYYY-MM-DD
   description: string;
   imageUrl?: string; // Optional - will use gradient placeholder if not provided
+  photos?: Array<{
+    url?: string;
+    caption?: string;
+    gradient?: string; // Color gradient for placeholder
+  }>; // Multiple photos for slideshow
   room: 'main' | 'firstDate' | 'adventures' | 'specialMoments';
   frameStyle: 'classic' | 'modern' | 'ornate';
   position: [number, number, number]; // 3D coordinates in museum
